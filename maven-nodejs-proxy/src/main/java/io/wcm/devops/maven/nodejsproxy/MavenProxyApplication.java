@@ -17,42 +17,44 @@
  * limitations under the License.
  * #L%
  */
-package com.example.helloworld;
+package io.wcm.devops.maven.nodejsproxy;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.wcm.devops.maven.nodejsproxy.health.NodeJsDistHealthCheck;
+import io.wcm.devops.maven.nodejsproxy.resource.MavenProxyResource;
 
-import com.example.helloworld.health.TemplateHealthCheck;
-import com.example.helloworld.resources.HelloWorldResource;
-
-public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
-
-  public static void main(String[] args) throws Exception {
-    new HelloWorldApplication().run(args);
-  }
+/**
+ * Dropwizard Application for Maven NodeJS Proxy.
+ */
+public class MavenProxyApplication extends Application<MavenProxyConfiguration> {
 
   @Override
   public String getName() {
-    return "hello-world";
+    return "maven-nodejs-proxy";
   }
 
   @Override
-  public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+  public void initialize(Bootstrap<MavenProxyConfiguration> bootstrap) {
     // nothing to do yet
   }
 
   @Override
-  public void run(HelloWorldConfiguration configuration,
+  public void run(MavenProxyConfiguration configuration,
       Environment environment) {
-    final HelloWorldResource resource = new HelloWorldResource(
-        configuration.getTemplate(),
-        configuration.getDefaultName()
-        );
-    final TemplateHealthCheck healthCheck =
-        new TemplateHealthCheck(configuration.getTemplate());
-    environment.healthChecks().register("template", healthCheck);
+    final MavenProxyResource resource = new MavenProxyResource(configuration);
+
+    final NodeJsDistHealthCheck healthCheck = new NodeJsDistHealthCheck(configuration);
+    environment.healthChecks().register("nodeJsDist", healthCheck);
+
     environment.jersey().register(resource);
   }
+
+  //CHECKSTYLE:OFF
+  public static void main(String[] args) throws Exception {
+    new MavenProxyApplication().run(args);
+  }
+  //CHECKSTYLE:ON
 
 }

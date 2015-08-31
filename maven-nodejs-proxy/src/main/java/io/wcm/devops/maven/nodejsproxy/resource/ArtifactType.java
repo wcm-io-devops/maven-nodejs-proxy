@@ -17,35 +17,21 @@
  * limitations under the License.
  * #L%
  */
-package com.example.helloworld.core;
+package io.wcm.devops.maven.nodejsproxy.resource;
 
-import org.hibernate.validator.constraints.Length;
+/**
+ * Artifact type.
+ */
+public enum ArtifactType {
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+  /**
+   * Node JS binaries.
+   */
+  NODEJS,
 
-public class Saying {
+  /**
+   * NPM binaries
+   */
+  NPM
 
-  private long id;
-
-  @Length(max = 3)
-  private String content;
-
-  public Saying() {
-    // Jackson deserialization
-  }
-
-  public Saying(long id, String content) {
-    this.id = id;
-    this.content = content;
-  }
-
-  @JsonProperty
-  public long getId() {
-    return id;
-  }
-
-  @JsonProperty
-  public String getContent() {
-    return content;
-  }
 }
