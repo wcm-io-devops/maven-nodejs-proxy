@@ -24,3 +24,7 @@ npm-debug.log
 .rubygems-gem-maven-plugin
 *.sublime-*
 .temp/
+
+
+# Projekt-specific additions
+dependency-reduced-pom.xml
