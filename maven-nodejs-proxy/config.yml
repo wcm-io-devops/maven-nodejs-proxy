@@ -33,3 +33,14 @@ server:
   # Disable gzip compression to avoid corruption of tar.gz files
   gzip:
     enabled: false
+
+# Logging configuration
+logging:
+  level: INFO
+  appenders:
+    - type: file
+      currentLogFilename: target/logs/maven-nodejs-proxy.log
+      threshold: ALL
+      archive: true
+      archivedLogFilenamePattern: target/logs/maven-nodejs-proxy-%d.log
+      archivedFileCount: 5
