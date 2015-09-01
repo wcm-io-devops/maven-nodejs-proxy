@@ -57,9 +57,9 @@ public class MavenProxyResource {
   /**
    * @param config Configuration
    */
-  public MavenProxyResource(MavenProxyConfiguration config) {
+  public MavenProxyResource(MavenProxyConfiguration config, CloseableHttpClient httpClient) {
     this.config = config;
-    httpClient = HttpClientBuilder.build(config);
+    this.httpClient = httpClient;
   }
 
   /**

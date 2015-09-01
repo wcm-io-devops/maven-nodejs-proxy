@@ -20,10 +20,15 @@ npmBinariesUrl: "/npm/npm-${version}.${type}"
 nodeJsChecksumUrl: "/v${version}/SHASUMS.txt"
 
 # HTTP Client settings
-httpClientConnectTimeout: 5000
-httpClientSocketTimeout: 15000
+httpClient:
+  connectionTimeout: 2s
+  timeout: 5s
+  timeToLive: 1h
+  cookiesEnabled: false
+  retries: 2
+  userAgent: Maven NodeJS Proxy
 
-# Dropwizard config
+# Jetty configuration
 server:
   # Disable gzip compression to avoid corruption of tar.gz files
   gzip:

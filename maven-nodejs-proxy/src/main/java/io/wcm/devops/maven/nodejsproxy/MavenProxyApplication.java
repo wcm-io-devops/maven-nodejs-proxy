@@ -20,10 +20,13 @@
 package io.wcm.devops.maven.nodejsproxy;
 
 import io.dropwizard.Application;
+import io.dropwizard.client.HttpClientBuilder;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.wcm.devops.maven.nodejsproxy.health.NodeJsDistHealthCheck;
 import io.wcm.devops.maven.nodejsproxy.resource.MavenProxyResource;
+
+import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * Dropwizard Application for Maven NodeJS Proxy.
@@ -41,11 +44,14 @@ public class MavenProxyApplication extends Application<MavenProxyConfiguration> 
   }
 
   @Override
-  public void run(MavenProxyConfiguration configuration,
-      Environment environment) {
-    final MavenProxyResource resource = new MavenProxyResource(configuration);
+  public void run(MavenProxyConfiguration config, Environment environment) {
+    final CloseableHttpClient httpClient = new HttpClientBuilder(environment)
+    .using(config.getHttpClient())
+    .build("default");
 
-    final NodeJsDistHealthCheck healthCheck = new NodeJsDistHealthCheck(configuration);
+    final MavenProxyResource resource = new MavenProxyResource(config, httpClient);
+
+    final NodeJsDistHealthCheck healthCheck = new NodeJsDistHealthCheck(config, httpClient);
     environment.healthChecks().register("nodeJsDist", healthCheck);
 
     environment.jersey().register(resource);

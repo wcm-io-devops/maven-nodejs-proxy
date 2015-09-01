@@ -49,11 +49,10 @@
       <version>${dropwizard.version}</version>
       <scope>compile</scope>
     </dependency>
-    
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.5</version>
+      <groupId>io.dropwizard</groupId>
+      <artifactId>dropwizard-client</artifactId>
+      <version>${dropwizard.version}</version>
       <scope>compile</scope>
     </dependency>
     

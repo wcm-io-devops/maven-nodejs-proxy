@@ -20,6 +20,10 @@
 package io.wcm.devops.maven.nodejsproxy;
 
 import io.dropwizard.Configuration;
+import io.dropwizard.client.HttpClientConfiguration;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -48,17 +52,14 @@ public class MavenProxyConfiguration extends Configuration {
   private String npmBinariesUrl;
   @NotEmpty
   private String nodeJsChecksumUrl;
-  private int httpClientConnectTimeout = 5000;
-  private int httpClientSocketTimeout = 15000;
+
+  @Valid
+  @NotNull
+  private HttpClientConfiguration httpClient = new HttpClientConfiguration();
 
   @JsonProperty
   public String getGroupId() {
     return this.groupId;
-  }
-
-  @JsonProperty
-  public void setGroupId(String groupId) {
-    this.groupId = groupId;
   }
 
   @JsonProperty
@@ -67,18 +68,8 @@ public class MavenProxyConfiguration extends Configuration {
   }
 
   @JsonProperty
-  public void setNodeJsArtifactId(String nodeJsArtifactId) {
-    this.nodeJsArtifactId = nodeJsArtifactId;
-  }
-
-  @JsonProperty
   public String getNpmArtifactId() {
     return this.npmArtifactId;
-  }
-
-  @JsonProperty
-  public void setNpmArtifactId(String npmArtifactId) {
-    this.npmArtifactId = npmArtifactId;
   }
 
   @JsonProperty
@@ -87,18 +78,8 @@ public class MavenProxyConfiguration extends Configuration {
   }
 
   @JsonProperty
-  public void setNodeJsBinariesRootUrl(String nodeJsBinariesRootUrl) {
-    this.nodeJsBinariesRootUrl = nodeJsBinariesRootUrl;
-  }
-
-  @JsonProperty
   public String getNodeJsBinariesUrl() {
     return this.nodeJsBinariesUrl;
-  }
-
-  @JsonProperty
-  public void setNodeJsBinariesUrl(String nodeJsBinariesUrl) {
-    this.nodeJsBinariesUrl = nodeJsBinariesUrl;
   }
 
   @JsonProperty
@@ -107,18 +88,8 @@ public class MavenProxyConfiguration extends Configuration {
   }
 
   @JsonProperty
-  public void setNodeJsBinariesUrlWindows(String nodeJsBinariesUrlWindows) {
-    this.nodeJsBinariesUrlWindows = nodeJsBinariesUrlWindows;
-  }
-
-  @JsonProperty
   public String getNodeJsBinariesUrlWindowsX86() {
     return this.nodeJsBinariesUrlWindowsX86;
-  }
-
-  @JsonProperty
-  public void setNodeJsBinariesUrlWindowsX86(String nodeJsBinariesUrlWindowsX86) {
-    this.nodeJsBinariesUrlWindowsX86 = nodeJsBinariesUrlWindowsX86;
   }
 
   @JsonProperty
@@ -127,37 +98,13 @@ public class MavenProxyConfiguration extends Configuration {
   }
 
   @JsonProperty
-  public void setNpmBinariesUrl(String npmBinariesUrl) {
-    this.npmBinariesUrl = npmBinariesUrl;
-  }
-  @JsonProperty
   public String getNodeJsChecksumUrl() {
     return this.nodeJsChecksumUrl;
   }
 
-  @JsonProperty
-  public void setNodeJsChecksumUrl(String nodeJsChecksumUrl) {
-    this.nodeJsChecksumUrl = nodeJsChecksumUrl;
-  }
-
-  @JsonProperty
-  public int getHttpClientConnectTimeout() {
-    return this.httpClientConnectTimeout;
-  }
-
-  @JsonProperty
-  public void setHttpClientConnectTimeout(int httpClientConnectTimeout) {
-    this.httpClientConnectTimeout = httpClientConnectTimeout;
-  }
-
-  @JsonProperty
-  public int getHttpClientSocketTimeout() {
-    return this.httpClientSocketTimeout;
-  }
-
-  @JsonProperty
-  public void setHttpClientSocketTimeout(int httpClientSocketTimeout) {
-    this.httpClientSocketTimeout = httpClientSocketTimeout;
+  @JsonProperty("httpClient")
+  public HttpClientConfiguration getHttpClient() {
+    return httpClient;
   }
 
 }

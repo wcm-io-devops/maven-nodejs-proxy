@@ -20,7 +20,6 @@
 package io.wcm.devops.maven.nodejsproxy.health;
 
 import io.wcm.devops.maven.nodejsproxy.MavenProxyConfiguration;
-import io.wcm.devops.maven.nodejsproxy.resource.HttpClientBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -46,9 +45,9 @@ public class NodeJsDistHealthCheck extends HealthCheck {
   /**
    * @param config Configuration
    */
-  public NodeJsDistHealthCheck(MavenProxyConfiguration config) {
+  public NodeJsDistHealthCheck(MavenProxyConfiguration config, CloseableHttpClient httpClient) {
     this.config = config;
-    httpClient = HttpClientBuilder.build(config);
+    this.httpClient = httpClient;
   }
 
   @Override
