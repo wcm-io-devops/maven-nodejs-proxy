@@ -1,5 +1,5 @@
 # Group Id to publish artifacts to
-groupId: io.wcm.maven.proxy.nodejs
+groupId: org.nodejs.dist
 
 # Artifact Id to publish NodeJS binaries
 nodeJsArtifactId: nodejs-binaries

@@ -70,42 +70,7 @@ public class MavenProxyResource {
   @Timed
   @Produces(MediaType.TEXT_HTML)
   public String getIndex() {
-    String[] exampleUrls = new String[] {
-        "/io/wcm/maven/proxy/nodejs/nodejs-binaries/0.12.0/nodejs-binaries-0.12.0.pom",
-        "/io/wcm/maven/proxy/nodejs/nodejs-binaries/0.12.0/nodejs-binaries-0.12.0-windows-x86.exe",
-        "/io/wcm/maven/proxy/nodejs/nodejs-binaries/0.12.0/nodejs-binaries-0.12.0-windows-x64.exe",
-        "/io/wcm/maven/proxy/nodejs/nodejs-binaries/0.12.0/nodejs-binaries-0.12.0-linux-x86.tar.gz",
-        "/io/wcm/maven/proxy/nodejs/nodejs-binaries/0.12.0/nodejs-binaries-0.12.0-linux-x64.tar.gz",
-        "/io/wcm/maven/proxy/nodejs/nodejs-binaries/0.12.0/nodejs-binaries-0.12.0-darwin-x86.tar.gz",
-        "/io/wcm/maven/proxy/nodejs/nodejs-binaries/0.12.0/nodejs-binaries-0.12.0-darwin-x64.tar.gz",
-        "/io/wcm/maven/proxy/nodejs/npm-binaries/1.4.9/npm-binaries-1.4.9.pom",
-        "/io/wcm/maven/proxy/nodejs/npm-binaries/1.4.9/npm-binaries-1.4.9.tgz"
-    };
-    StringBuilder exampleUrlsMarkup = new StringBuilder();
-    for (String exampleUrl : exampleUrls) {
-      exampleUrlsMarkup.append("<li><a href=\"").append(exampleUrl).append("\">")
-      .append(exampleUrl).append("</a></li>");
-
-    }
-    return "<html>"
-    + "<head><title>Maven NodeJS Proxy</title></head>"
-    + "<body>"
-    + "<h1>Maven NodeJS Proxy</h1>"
-    + "<p>This is a Maven Artifact Proxy for NodeJS binaries located at: "
-    + "<a href=\"" + config.getNodeJsBinariesRootUrl() + "\">" + config.getNodeJsBinariesRootUrl() + "</a></p>"
-    + "<p>Every call to this repository is routed directly to this URL.</p>"
-    + "<p><strong>Please never use this Maven repository directly in your maven builds, but only via an Repository Manager "
-    + "which caches the resolved artifacts.</strong></p>"
-    + "<p>If you want to setup your own proxy get the source code:"
-    + "<a href=\"https://github.com/wcm-io-devops/maven-nodejs-proxy\">https://github.com/wcm-io-devops/maven-nodejs-proxy</a></p>"
-    + "<hr/>"
-    + "<p>Examples:</p>"
-    + "<ul>"
-    + exampleUrlsMarkup
-    + "</ul>"
-    + "<p>For all files SHA1 checksums are supported (.sha1 suffix). MD5 checksums are not supported.</p>"
-    + "</body>"
-    + "</html>";
+    return IndexPageBuilder.build(config);
   }
 
   /**
