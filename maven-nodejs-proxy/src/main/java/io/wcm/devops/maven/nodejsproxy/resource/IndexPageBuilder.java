@@ -69,7 +69,7 @@ public final class IndexPageBuilder {
     + "<p>Every call to this repository is routed directly to this URL.</p>"
     + "<p><strong>Please never use this Maven repository directly in your maven builds, but only via an Repository Manager "
     + "which caches the resolved artifacts.</strong></p>"
-    + "<p>If you want to setup your own proxy get the source code:"
+    + "<p>If you want to setup your own proxy get the source code: "
     + "<a href=\"https://github.com/wcm-io-devops/maven-nodejs-proxy\">https://github.com/wcm-io-devops/maven-nodejs-proxy</a></p>"
     + "<hr/>"
     + "<p>Examples:</p>"
@@ -79,7 +79,7 @@ public final class IndexPageBuilder {
     + "<p>For all files SHA1 checksums are supported (.sha1 suffix). MD5 checksums are not supported.</p>"
     + (serviceVersion != null ? "<hr/><p>Version " + IndexPageBuilder.class.getPackage().getImplementationVersion() + ".</p>" : "")
     + "</body>"
-    + "</html>";
+        + "</html>";
   }
 
 }
