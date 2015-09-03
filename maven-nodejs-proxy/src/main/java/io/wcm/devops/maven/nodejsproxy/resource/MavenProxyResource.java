@@ -19,6 +19,7 @@
  */
 package io.wcm.devops.maven.nodejsproxy.resource;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import io.wcm.devops.maven.nodejsproxy.MavenProxyConfiguration;
 
 import java.io.IOException;
@@ -187,19 +188,15 @@ public class MavenProxyResource {
       log.info("Proxy file: {}", url);
       HttpGet get = new HttpGet(url);
       HttpResponse response = httpClient.execute(get);
-      try {
-        if (response.getStatusLine().getStatusCode() == HttpServletResponse.SC_OK) {
-          byte[] data = EntityUtils.toByteArray(response.getEntity());
-          return Response.ok(data)
-              .type(MediaType.APPLICATION_OCTET_STREAM)
-              .build();
-        }
-        else {
-          return Response.status(Response.Status.NOT_FOUND).build();
-        }
+      if (response.getStatusLine().getStatusCode() == HttpServletResponse.SC_OK) {
+        return Response.ok(new SpoolStreamingOutput(response.getEntity()))
+            .type(MediaType.APPLICATION_OCTET_STREAM)
+            .header(CONTENT_LENGTH, response.containsHeader(CONTENT_LENGTH) ? response.getFirstHeader(CONTENT_LENGTH).getValue() : null)
+            .build();
       }
-      finally {
+      else {
         EntityUtils.consumeQuietly(response.getEntity());
+        return Response.status(Response.Status.NOT_FOUND).build();
       }
     }
   }
@@ -242,26 +239,24 @@ public class MavenProxyResource {
     log.info("Proxy file: {}", url);
     HttpGet get = new HttpGet(url);
     HttpResponse response = httpClient.execute(get);
-    try {
-      if (response.getStatusLine().getStatusCode() == HttpServletResponse.SC_OK) {
+    if (response.getStatusLine().getStatusCode() == HttpServletResponse.SC_OK) {
+      if (getChecksum) {
         byte[] data = EntityUtils.toByteArray(response.getEntity());
-        if (getChecksum) {
-          return Response.ok(DigestUtils.sha1Hex(data))
-              .type(MediaType.TEXT_PLAIN)
-              .build();
-        }
-        else {
-          return Response.ok(data)
-              .type(MediaType.APPLICATION_OCTET_STREAM)
-              .build();
-        }
+        EntityUtils.consumeQuietly(response.getEntity());
+        return Response.ok(DigestUtils.sha1Hex(data))
+            .type(MediaType.TEXT_PLAIN)
+            .build();
       }
       else {
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(new SpoolStreamingOutput(response.getEntity()))
+            .type(MediaType.APPLICATION_OCTET_STREAM)
+            .header(CONTENT_LENGTH, response.containsHeader(CONTENT_LENGTH) ? response.getFirstHeader(CONTENT_LENGTH).getValue() : null)
+            .build();
       }
     }
-    finally {
+    else {
       EntityUtils.consumeQuietly(response.getEntity());
+      return Response.status(Response.Status.NOT_FOUND).build();
     }
   }
 
