@@ -46,6 +46,9 @@ class SpoolStreamingOutput implements StreamingOutput {
     try (InputStream is = httpEntity.getContent()) {
       IOUtils.copyLarge(is, os);
     }
+    catch (IOException ex) {
+      // ignore
+    }
     finally {
       EntityUtils.consumeQuietly(httpEntity);
     }
