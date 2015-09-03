@@ -1,3 +1,6 @@
+# This is a Dropwizard-based Microservice
+# See https://dropwizard.github.io/dropwizard/manual/configuration.html
+
 # Group Id to publish artifacts to
 groupId: org.nodejs.dist
 
