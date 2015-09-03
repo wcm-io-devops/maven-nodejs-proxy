@@ -1,0 +1,46 @@
+# Group Id to publish artifacts to
+groupId: org.nodejs.dist
+
+# Artifact Id to publish NodeJS binaries
+nodeJsArtifactId: nodejs-binaries
+
+# Artifact Id to publish NPM binaries
+npmArtifactId: npm-binaries
+
+# Root URL to download NodeJS binaries from
+nodeJsBinariesRootUrl: "https://nodejs.org/dist"
+
+# Url parts to download the different artifacts
+nodeJsBinariesUrl: "/v${version}/node-v${version}-${os}-${arch}.${type}"
+nodeJsBinariesUrlWindows: "/v${version}/${arch}/node.${type}"
+nodeJsBinariesUrlWindowsX86: "/v${version}/node.${type}"
+npmBinariesUrl: "/npm/npm-${version}.${type}"
+
+# SHA-1 checksums file
+nodeJsChecksumUrl: "/v${version}/SHASUMS.txt"
+
+# HTTP Client settings
+httpClient:
+  connectionTimeout: 2s
+  timeout: 5s
+  timeToLive: 1h
+  cookiesEnabled: false
+  retries: 2
+  userAgent: Maven NodeJS Proxy
+
+# Jetty configuration
+server:
+  # Disable gzip compression to avoid corruption of tar.gz files
+  gzip:
+    enabled: false
+
+# Logging configuration
+logging:
+  level: INFO
+  appenders:
+    - type: file
+      currentLogFilename: target/logs/maven-nodejs-proxy.log
+      threshold: ALL
+      archive: true
+      archivedLogFilenamePattern: target/logs/maven-nodejs-proxy-%d.log
+      archivedFileCount: 5
