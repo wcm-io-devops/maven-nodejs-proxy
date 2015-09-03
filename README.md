@@ -4,6 +4,8 @@
 
 Maven proxy to download NodeJS binaries as Maven artifacts.
 
+This is a Maven Artifact Proxy for NodeJS binaries located at: https://nodejs.org/dist. Every call to this repository is routed directly to this URL, so it should not be used directly as Maven Repository, but cached by your own Maven Artifact Manager.
+
 Steps to build and start the proxy:
 
 - Go to maven-nodejs-proxy directory
@@ -11,3 +13,7 @@ Steps to build and start the proxy:
 - Start server with<br/>
 `java -jar target/io.wcm.devops.maven.nodejs-proxy-<version>.jar server config.yml`
 - Go to [http://localhost:8080](http://localhost:8080) for further instructions
+
+---
+
+A public instance of this proxy is available at: https://maven-nodejs-proxy.pvtool.org/
