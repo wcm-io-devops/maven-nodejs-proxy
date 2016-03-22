@@ -118,6 +118,7 @@ public class MavenProxyResourceTest {
   }
 
   private void assertResponse(String path, Response response, String mediaType) {
+    System.out.println("Integration test: " + path);
     assertEquals("HTTP status " + path, HttpStatus.SC_OK, response.getStatus());
     assertEquals("Media type " + path, mediaType, response.getMediaType().toString());
     assertTrue(response.hasEntity());

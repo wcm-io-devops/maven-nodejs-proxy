@@ -26,7 +26,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
@@ -45,6 +44,10 @@ final class TestContext {
     ConfigurationFactory factory = new ConfigurationFactory<MavenProxyConfiguration>(
         MavenProxyConfiguration.class, null, OBJECT_MAPPER, "override");
     try {
+      File configFile = new File("config.yml");
+      if (!configFile.exists()) {
+        throw new RuntimeException("Configuration file not found: " + configFile.getCanonicalPath());
+      }
       return (MavenProxyConfiguration)factory.build(new File("config.yml"));
     }
     catch (IOException | ConfigurationException ex) {
