@@ -19,9 +19,9 @@
  */
 package io.wcm.devops.maven.nodejsproxy.resource;
 
-import io.wcm.devops.maven.nodejsproxy.MavenProxyConfiguration;
-
 import org.apache.commons.lang3.StringUtils;
+
+import io.wcm.devops.maven.nodejsproxy.MavenProxyConfiguration;
 
 /**
  * Builds HTML index page
@@ -29,15 +29,15 @@ import org.apache.commons.lang3.StringUtils;
 public final class IndexPageBuilder {
 
   private static final String[] EXAMPLE_URLS = new String[] {
-    "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0.pom",
-    "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-windows-x86.exe",
-    "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-windows-x64.exe",
-    "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-linux-x86.tar.gz",
-    "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-linux-x64.tar.gz",
-    "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-darwin-x86.tar.gz",
-    "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-darwin-x64.tar.gz",
-    "${groupIdPath}/${npmArtifactId}/1.4.9/${npmArtifactId}-1.4.9.pom",
-    "${groupIdPath}/${npmArtifactId}/1.4.9/${npmArtifactId}-1.4.9.tgz"
+      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0.pom",
+      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-windows-x86.exe",
+      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-windows-x64.exe",
+      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-linux-x86.tar.gz",
+      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-linux-x64.tar.gz",
+      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-darwin-x86.tar.gz",
+      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-darwin-x64.tar.gz",
+      "${groupIdPath}/${npmArtifactId}/1.4.9/${npmArtifactId}-1.4.9.pom",
+      "${groupIdPath}/${npmArtifactId}/1.4.9/${npmArtifactId}-1.4.9.tgz"
   };
 
   private IndexPageBuilder() {
@@ -60,8 +60,11 @@ public final class IndexPageBuilder {
 
     String serviceVersion = IndexPageBuilder.class.getPackage().getImplementationVersion();
 
-    return "<html>"
-    + "<head><title>Maven NodeJS Proxy</title></head>"
+    return "<!DOCTYPE html>\n<html>"
+    + "<head>"
+    + "<title>Maven NodeJS Proxy</title>"
+    + "<style>body { font-family: sans-serif; }</style>"
+    + "</head>"
     + "<body>"
     + "<h1>Maven NodeJS Proxy</h1>"
     + "<p>This is a Maven Artifact Proxy for NodeJS binaries located at: "
@@ -79,7 +82,7 @@ public final class IndexPageBuilder {
     + "<p>For all files SHA1 checksums are supported (.sha1 suffix). MD5 checksums are not supported.</p>"
     + (serviceVersion != null ? "<hr/><p>Version " + IndexPageBuilder.class.getPackage().getImplementationVersion() + ".</p>" : "")
     + "</body>"
-        + "</html>";
+    + "</html>";
   }
 
 }
