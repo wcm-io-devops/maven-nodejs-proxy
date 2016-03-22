@@ -37,7 +37,7 @@ class SpoolStreamingOutput implements StreamingOutput {
 
   private final HttpEntity httpEntity;
 
-  public SpoolStreamingOutput(HttpEntity httpEntity) {
+  SpoolStreamingOutput(HttpEntity httpEntity) {
     this.httpEntity = httpEntity;
   }
 

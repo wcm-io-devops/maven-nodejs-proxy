@@ -34,7 +34,7 @@ public class Checksums {
   private final Map<String, String> checksums = new HashMap<>();
 
   private static final Pattern LEVEL_1_RELATIVE_NAME = Pattern.compile("^.*/([^/]+)$");
-  private static final Pattern LEVEL_2_RELATIVE_NAME = Pattern.compile("^.*/([^/]+/[^/]+)$");;
+  private static final Pattern LEVEL_2_RELATIVE_NAME = Pattern.compile("^.*/([^/]+/[^/]+)$");
 
   /**
    * @param data Checksums file content
