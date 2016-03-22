@@ -34,7 +34,7 @@ public class Checksums {
   private final Map<String, String> checksums = new HashMap<>();
 
   private static final Pattern LEVEL_1_RELATIVE_NAME = Pattern.compile("^.*/([^/]+)$");
-  private static final Pattern LEVEL_2_RELATIVE_NAME = Pattern.compile("^.*/([^/]+/[^/]+)$");;
+  private static final Pattern LEVEL_2_RELATIVE_NAME = Pattern.compile("^.*/([^/]+/[^/]+)$");
 
   /**
    * @param data Checksums file content
@@ -42,10 +42,10 @@ public class Checksums {
   public Checksums(String data) {
     String[] lines = StringUtils.split(data, "\n");
     for (String line : lines) {
-      String sha1 = StringUtils.substringBefore(line, "  ");
+      String checksum = StringUtils.substringBefore(line, "  ");
       String filename = StringUtils.substringAfter(line, "  ");
-      if (StringUtils.isNoneBlank(sha1, filename)) {
-        checksums.put(filename, sha1);
+      if (StringUtils.isNoneBlank(checksum, filename)) {
+        checksums.put(filename, checksum);
       }
     }
   }
