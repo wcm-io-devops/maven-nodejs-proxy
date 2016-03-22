@@ -56,7 +56,6 @@ public final class IndexPageBuilder {
       url = StringUtils.replace(url, "${nodeJsSampleVersion}", config.getNodeJsSampleVersion());
       url = StringUtils.replace(url, "${npmSampleVersion}", config.getNpmSampleVersion());
       exampleUrlsMarkup.append("<li><a href=\"").append(url).append("\">").append(url).append("</a></li>");
-
     }
 
     String serviceVersion = IndexPageBuilder.class.getPackage().getImplementationVersion();
@@ -70,13 +69,13 @@ public final class IndexPageBuilder {
     + "<h1>Maven NodeJS Proxy</h1>"
     + "<p>This is a Maven Artifact Proxy for NodeJS binaries located at: "
     + "<a href=\"" + config.getNodeJsBinariesRootUrl() + "\">" + config.getNodeJsBinariesRootUrl() + "</a></p>"
-    + "<p>Every call to this repository is routed directly to this URL.</p>"
-    + "<p><strong>Please never use this Maven repository directly in your maven builds, but only via an Repository Manager "
+    + "<p>Every call to this Maven repository is routed directly to the NodeJS distribution server.</p>"
+    + "<p><strong>Please never use this Maven repository directly in your maven builds, use it only via a Repository Manager "
     + "which caches the resolved artifacts.</strong></p>"
     + "<p>If you want to setup your own proxy get the source code: "
     + "<a href=\"https://github.com/wcm-io-devops/maven-nodejs-proxy\">https://github.com/wcm-io-devops/maven-nodejs-proxy</a></p>"
     + "<hr/>"
-    + "<p>Examples:</p>"
+    + "<p>Example artifacts:</p>"
     + "<ul>"
     + exampleUrlsMarkup
     + "</ul>"
