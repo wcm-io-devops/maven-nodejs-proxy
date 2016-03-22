@@ -26,6 +26,10 @@
     <release version="1.1.0" date="2016-03-22">
       <action type="update" dev="sseifert" issue="WDEVOP-1">
         Binary File Structre changed in NPM Versions > 0.x and support for SHA-256 checksums.
+        Please update your configuration file, some parameters needed to be changed.
+      </action>
+      <action type="update" dev="sseifert">
+        Update to dropwizard 0.9.2.
       </action>
     </release>
 
