@@ -81,7 +81,7 @@ public final class IndexPageBuilder {
     + exampleUrlsMarkup
     + "</ul>"
     + "<p>For all files SHA1 checksums are supported (.sha1 suffix). MD5 checksums are not supported.</p>"
-    + (serviceVersion != null ? "<hr/><p>Version " + IndexPageBuilder.class.getPackage().getImplementationVersion() + ".</p>" : "")
+    + (serviceVersion != null ? "<hr/><p>Version " + IndexPageBuilder.class.getPackage().getImplementationVersion() + "</p>" : "")
     + "</body>"
     + "</html>";
   }
