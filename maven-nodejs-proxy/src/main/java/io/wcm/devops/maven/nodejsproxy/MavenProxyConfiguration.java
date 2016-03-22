@@ -19,15 +19,15 @@
  */
 package io.wcm.devops.maven.nodejsproxy;
 
-import io.dropwizard.Configuration;
-import io.dropwizard.client.HttpClientConfiguration;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.dropwizard.Configuration;
+import io.dropwizard.client.HttpClientConfiguration;
 
 /**
  * Configuration for Maven NodeJS Proxy.
@@ -47,11 +47,17 @@ public class MavenProxyConfiguration extends Configuration {
   @NotEmpty
   private String nodeJsBinariesUrlWindows;
   @NotEmpty
-  private String nodeJsBinariesUrlWindowsX86;
+  private String nodeJsBinariesUrlWindowsX86Legacy;
+  @NotEmpty
+  private String nodeJsBinariesUrlWindowsX64Legacy;
   @NotEmpty
   private String npmBinariesUrl;
   @NotEmpty
   private String nodeJsChecksumUrl;
+  @NotEmpty
+  private String nodeJsSampleVersion;
+  @NotEmpty
+  private String npmSampleVersion;
 
   @Valid
   @NotNull
@@ -88,8 +94,13 @@ public class MavenProxyConfiguration extends Configuration {
   }
 
   @JsonProperty
-  public String getNodeJsBinariesUrlWindowsX86() {
-    return this.nodeJsBinariesUrlWindowsX86;
+  public String getNodeJsBinariesUrlWindowsX86Legacy() {
+    return this.nodeJsBinariesUrlWindowsX86Legacy;
+  }
+
+  @JsonProperty
+  public String getNodeJsBinariesUrlWindowsX64Legacy() {
+    return this.nodeJsBinariesUrlWindowsX64Legacy;
   }
 
   @JsonProperty
@@ -100,6 +111,16 @@ public class MavenProxyConfiguration extends Configuration {
   @JsonProperty
   public String getNodeJsChecksumUrl() {
     return this.nodeJsChecksumUrl;
+  }
+
+  @JsonProperty
+  public String getNodeJsSampleVersion() {
+    return this.nodeJsSampleVersion;
+  }
+
+  @JsonProperty
+  public String getNpmSampleVersion() {
+    return this.npmSampleVersion;
   }
 
   @JsonProperty("httpClient")

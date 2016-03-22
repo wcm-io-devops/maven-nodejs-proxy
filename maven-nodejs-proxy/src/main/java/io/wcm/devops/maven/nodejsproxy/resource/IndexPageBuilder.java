@@ -29,15 +29,14 @@ import io.wcm.devops.maven.nodejsproxy.MavenProxyConfiguration;
 public final class IndexPageBuilder {
 
   private static final String[] EXAMPLE_URLS = new String[] {
-      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0.pom",
-      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-windows-x86.exe",
-      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-windows-x64.exe",
-      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-linux-x86.tar.gz",
-      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-linux-x64.tar.gz",
-      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-darwin-x86.tar.gz",
-      "${groupIdPath}/${nodeJsArtifactId}/0.12.0/${nodeJsArtifactId}-0.12.0-darwin-x64.tar.gz",
-      "${groupIdPath}/${npmArtifactId}/1.4.9/${npmArtifactId}-1.4.9.pom",
-      "${groupIdPath}/${npmArtifactId}/1.4.9/${npmArtifactId}-1.4.9.tgz"
+      "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}.pom",
+      "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}-windows-x86.exe",
+      "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}-windows-x64.exe",
+      "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}-linux-x86.tar.gz",
+      "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}-linux-x64.tar.gz",
+      "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}-darwin-x64.tar.gz",
+      "${groupIdPath}/${npmArtifactId}/${npmSampleVersion}/${npmArtifactId}-${npmSampleVersion}.pom",
+      "${groupIdPath}/${npmArtifactId}/${npmSampleVersion}/${npmArtifactId}-${npmSampleVersion}.tgz"
   };
 
   private IndexPageBuilder() {
@@ -54,6 +53,8 @@ public final class IndexPageBuilder {
       url = StringUtils.replace(url, "${groupIdPath}", StringUtils.replace(config.getGroupId(), ".", "/"));
       url = StringUtils.replace(url, "${nodeJsArtifactId}", config.getNodeJsArtifactId());
       url = StringUtils.replace(url, "${npmArtifactId}", config.getNpmArtifactId());
+      url = StringUtils.replace(url, "${nodeJsSampleVersion}", config.getNodeJsSampleVersion());
+      url = StringUtils.replace(url, "${npmSampleVersion}", config.getNpmSampleVersion());
       exampleUrlsMarkup.append("<li><a href=\"").append(url).append("\">").append(url).append("</a></li>");
 
     }

@@ -41,14 +41,15 @@ public class MavenProxyResourceTest {
 
   // test with the following NodeJS and NPM versions
   private static final String[] NODEJS_VERSIONS = {
-      "0.12.0"
+      "0.12.0",
+      "4.4.0",
+      "5.9.0",
   };
   private static final String[] NODEJS_TARGETS = {
       "-windows-x86.exe",
       "-windows-x64.exe",
       "-linux-x86.tar.gz",
       "-linux-x64.tar.gz",
-      "-darwin-x86.tar.gz",
       "-darwin-x64.tar.gz",
   };
   private static final String[] NPM_VERSIONS = {
@@ -130,7 +131,7 @@ public class MavenProxyResourceTest {
     try (InputStream is = dataResponse.readEntity(InputStream.class)) {
       byte[] data = IOUtils.toByteArray(is);
       String sha1 = sha1Response.readEntity(String.class);
-      assertEquals(sha1, DigestUtils.sha1Hex(data));
+      assertEquals("SHA-1 " + path, sha1, DigestUtils.sha1Hex(data));
     }
     catch (IOException ex) {
       throw new RuntimeException("Error checking SHA-1 of " + path, ex);

@@ -15,12 +15,17 @@ nodeJsBinariesRootUrl: "https://nodejs.org/dist"
 
 # Url parts to download the different artifacts
 nodeJsBinariesUrl: "/v${version}/node-v${version}-${os}-${arch}.${type}"
-nodeJsBinariesUrlWindows: "/v${version}/${arch}/node.${type}"
-nodeJsBinariesUrlWindowsX86: "/v${version}/node.${type}"
+nodeJsBinariesUrlWindows: "/v${version}/win-${arch}/node.${type}"
+nodeJsBinariesUrlWindowsX86Legacy: "/v${version}/node.${type}"
+nodeJsBinariesUrlWindowsX64Legacy: "/v${version}/${arch}/node.${type}"
 npmBinariesUrl: "/npm/npm-${version}.${type}"
 
-# SHA-1 checksums file
-nodeJsChecksumUrl: "/v${version}/SHASUMS.txt"
+# SHA-256 checksums file
+nodeJsChecksumUrl: "/v${version}/SHASUMS256.txt"
+
+# Sample versions for index page
+nodeJsSampleVersion: 4.4.0
+npmSampleVersion: 1.4.9
 
 # HTTP Client settings
 httpClient:

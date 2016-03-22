@@ -20,7 +20,6 @@
 package io.wcm.devops.maven.nodejsproxy.resource;
 
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import io.wcm.devops.maven.nodejsproxy.MavenProxyConfiguration;
 
 import java.io.IOException;
 
@@ -39,10 +38,13 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
+
+import io.wcm.devops.maven.nodejsproxy.MavenProxyConfiguration;
 
 /**
  * Proxies NodeJS binaries.
@@ -166,39 +168,8 @@ public class MavenProxyResource {
       getChecksum = true;
     }
 
-    // return checksum from SHASUMS.txt
-    if (getChecksum) {
-      Checksums checksums = getChecksums(version);
-      String url = buildBinaryUrl(artifactType, version, os, arch, StringUtils.removeEnd(type, ".sha1"));
-      String checksum = checksums.get(url);
-      if (checksum != null) {
-        return Response.ok(checksum)
-            .type(MediaType.TEXT_PLAIN)
-            .build();
-      }
-      else {
-        return Response.status(Response.Status.NOT_FOUND).build();
-      }
-    }
-
-    // return binary file
-    else {
-      String url = buildBinaryUrl(artifactType, version, os, arch, type);
-
-      log.info("Proxy file: {}", url);
-      HttpGet get = new HttpGet(url);
-      HttpResponse response = httpClient.execute(get);
-      if (response.getStatusLine().getStatusCode() == HttpServletResponse.SC_OK) {
-        return Response.ok(new SpoolStreamingOutput(response.getEntity()))
-            .type(MediaType.APPLICATION_OCTET_STREAM)
-            .header(CONTENT_LENGTH, response.containsHeader(CONTENT_LENGTH) ? response.getFirstHeader(CONTENT_LENGTH).getValue() : null)
-            .build();
-      }
-      else {
-        EntityUtils.consumeQuietly(response.getEntity());
-        return Response.status(Response.Status.NOT_FOUND).build();
-      }
-    }
+    String url = buildBinaryUrl(artifactType, version, os, arch, StringUtils.removeEnd(type, ".sha1"));
+    return getBinaryWithChecksumValidation(url, version, getChecksum);
   }
 
   /**
@@ -235,20 +206,48 @@ public class MavenProxyResource {
     }
 
     String url = buildBinaryUrl(artifactType, version, null, null, StringUtils.removeEnd(type, ".sha1"));
+    return getBinary(url, version, getChecksum, null);
+  }
 
+  private Response getBinaryWithChecksumValidation(String url, String version, boolean getChecksum) throws IOException {
+    // get original checksum from source directory
+    Checksums checksums = getChecksums(version);
+    if (checksums == null) {
+      log.info("File not found: {} - no checksum file found.", url);
+      return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    String checksum = checksums.get(url);
+    if (checksum == null) {
+      log.info("File not found: {} - no checksum found in checkum file.", url);
+      return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    return getBinary(url, version, getChecksum, checksum);
+  }
+
+  private Response getBinary(String url, String version, boolean getChecksum, String expectedChecksum) throws IOException {
     log.info("Proxy file: {}", url);
     HttpGet get = new HttpGet(url);
     HttpResponse response = httpClient.execute(get);
     if (response.getStatusLine().getStatusCode() == HttpServletResponse.SC_OK) {
+      byte[] data = EntityUtils.toByteArray(response.getEntity());
+
+      // validate checksum
+      if (expectedChecksum != null) {
+        String remoteChecksum = DigestUtils.sha256Hex(data);
+        if (!StringUtils.equals(expectedChecksum, remoteChecksum)) {
+          log.warn("Reject file: {} - checksum comparison failed - expected: {}, actual: {}", url, expectedChecksum, remoteChecksum);
+          return Response.status(Response.Status.NOT_FOUND).build();
+        }
+      }
+
       if (getChecksum) {
-        byte[] data = EntityUtils.toByteArray(response.getEntity());
-        EntityUtils.consumeQuietly(response.getEntity());
         return Response.ok(DigestUtils.sha1Hex(data))
             .type(MediaType.TEXT_PLAIN)
             .build();
       }
       else {
-        return Response.ok(new SpoolStreamingOutput(response.getEntity()))
+        return Response.ok(data)
             .type(MediaType.APPLICATION_OCTET_STREAM)
             .header(CONTENT_LENGTH, response.containsHeader(CONTENT_LENGTH) ? response.getFirstHeader(CONTENT_LENGTH).getValue() : null)
             .build();
@@ -337,11 +336,14 @@ public class MavenProxyResource {
     switch (artifactType) {
       case NODEJS:
         if (StringUtils.equals(os, "windows")) {
-          if (StringUtils.equals(arch, "x86")) {
-            url = config.getNodeJsBinariesUrlWindowsX86();
+          if (isVersion4Up(version)) {
+            url = config.getNodeJsBinariesUrlWindows();
+          }
+          else if (StringUtils.equals(arch, "x86")) {
+            url = config.getNodeJsBinariesUrlWindowsX86Legacy();
           }
           else {
-            url = config.getNodeJsBinariesUrlWindows();
+            url = config.getNodeJsBinariesUrlWindowsX64Legacy();
           }
         }
         else {
@@ -360,6 +362,12 @@ public class MavenProxyResource {
     url = StringUtils.replace(url, "${arch}", StringUtils.defaultString(arch));
     url = StringUtils.replace(url, "${type}", StringUtils.defaultString(type));
     return url;
+  }
+
+  private boolean isVersion4Up(String version) {
+    DefaultArtifactVersion givenVersion = new DefaultArtifactVersion(version);
+    DefaultArtifactVersion minVersion = new DefaultArtifactVersion("4.0.0");
+    return givenVersion.compareTo(minVersion) >= 0;
   }
 
 }
