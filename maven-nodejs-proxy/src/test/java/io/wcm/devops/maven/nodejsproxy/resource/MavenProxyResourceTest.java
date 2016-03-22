@@ -42,21 +42,20 @@ public class MavenProxyResourceTest {
   // test with the following NodeJS and NPM versions
   private static final String[] NODEJS_VERSIONS = {
       "0.12.0",
-      "4.4.0",
-      "5.9.0",
+      "4.4.0"
   };
   private static final String[] NODEJS_TARGETS = {
       "-windows-x86.exe",
       "-windows-x64.exe",
       "-linux-x86.tar.gz",
       "-linux-x64.tar.gz",
-      "-darwin-x64.tar.gz",
+      "-darwin-x64.tar.gz"
   };
   private static final String[] NPM_VERSIONS = {
       "1.4.9"
   };
   private static final String[] NPM_TARGETS = {
-      ".tgz",
+      ".tgz"
   };
 
   @Rule
