@@ -24,7 +24,7 @@ npmBinariesUrl: "/npm/npm-${version}.${type}"
 nodeJsChecksumUrl: "/v${version}/SHASUMS256.txt"
 
 # Sample versions for index page
-nodeJsSampleVersion: 4.4.0
+nodeJsSampleVersion: 10.15.0
 npmSampleVersion: 1.4.9
 
 # HTTP Client settings

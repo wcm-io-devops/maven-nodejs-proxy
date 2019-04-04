@@ -30,9 +30,8 @@ public final class IndexPageBuilder {
 
   private static final String[] EXAMPLE_URLS = new String[] {
       "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}.pom",
-      "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}-windows-x86.exe",
-      "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}-windows-x64.exe",
-      "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}-linux-x86.tar.gz",
+      "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}-win-x86.zip",
+      "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}-win-x64.zip",
       "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}-linux-x64.tar.gz",
       "${groupIdPath}/${nodeJsArtifactId}/${nodeJsSampleVersion}/${nodeJsArtifactId}-${nodeJsSampleVersion}-darwin-x64.tar.gz",
       "${groupIdPath}/${npmArtifactId}/${npmSampleVersion}/${npmArtifactId}-${npmSampleVersion}.pom",
@@ -61,28 +60,28 @@ public final class IndexPageBuilder {
     String serviceVersion = IndexPageBuilder.class.getPackage().getImplementationVersion();
 
     return "<!DOCTYPE html>\n<html>"
-    + "<head>"
-    + "<title>Maven NodeJS Proxy</title>"
-    + "<style>body { font-family: sans-serif; }</style>"
-    + "</head>"
-    + "<body>"
-    + "<h1>Maven NodeJS Proxy</h1>"
-    + "<p>This is a Maven Artifact Proxy for NodeJS binaries located at: "
-    + "<a href=\"" + config.getNodeJsBinariesRootUrl() + "\">" + config.getNodeJsBinariesRootUrl() + "</a></p>"
-    + "<p>Every call to this Maven repository is routed directly to the NodeJS distribution server.</p>"
-    + "<p><strong>Please never use this Maven repository directly in your maven builds, use it only via a Repository Manager "
-    + "which caches the resolved artifacts.</strong></p>"
-    + "<p>If you want to setup your own proxy get the source code: "
-    + "<a href=\"https://github.com/wcm-io-devops/maven-nodejs-proxy\">https://github.com/wcm-io-devops/maven-nodejs-proxy</a></p>"
-    + "<hr/>"
-    + "<p>Example artifacts:</p>"
-    + "<ul>"
-    + exampleUrlsMarkup
-    + "</ul>"
-    + "<p>For all files SHA1 checksums are supported (.sha1 suffix). MD5 checksums are not supported.</p>"
-    + (serviceVersion != null ? "<hr/><p>Version " + IndexPageBuilder.class.getPackage().getImplementationVersion() + "</p>" : "")
-    + "</body>"
-    + "</html>";
+        + "<head>"
+        + "<title>Maven NodeJS Proxy</title>"
+        + "<style>body { font-family: sans-serif; }</style>"
+        + "</head>"
+        + "<body>"
+        + "<h1>Maven NodeJS Proxy</h1>"
+        + "<p>This is a Maven Artifact Proxy for NodeJS binaries located at: "
+        + "<a href=\"" + config.getNodeJsBinariesRootUrl() + "\">" + config.getNodeJsBinariesRootUrl() + "</a></p>"
+        + "<p>Every call to this Maven repository is routed directly to the NodeJS distribution server.</p>"
+        + "<p><strong>Please never use this Maven repository directly in your maven builds, use it only via a Repository Manager "
+        + "which caches the resolved artifacts.</strong></p>"
+        + "<p>If you want to setup your own proxy get the source code: "
+        + "<a href=\"https://github.com/wcm-io-devops/maven-nodejs-proxy\">https://github.com/wcm-io-devops/maven-nodejs-proxy</a></p>"
+        + "<hr/>"
+        + "<p>Example artifacts:</p>"
+        + "<ul>"
+        + exampleUrlsMarkup
+        + "</ul>"
+        + "<p>For all files SHA1 checksums are supported (.sha1 suffix). MD5 checksums are not supported.</p>"
+        + (serviceVersion != null ? "<hr/><p>Version " + IndexPageBuilder.class.getPackage().getImplementationVersion() + "</p>" : "")
+        + "</body>"
+        + "</html>";
   }
 
 }
