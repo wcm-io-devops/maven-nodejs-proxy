@@ -18,3 +18,6 @@ Steps to build and start the proxy:
 ---
 
 A public instance of this proxy is available at: https://maven-nodejs-proxy.pvtool.org/
+
+A Ansible role for this proxy is available at:
+https://github.com/wcm-io-devops/ansible-maven-nodejs-proxy

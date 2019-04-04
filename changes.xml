@@ -23,6 +23,15 @@
     xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
   <body>
 
+    <release version="1.2.0" date="2019-04-05">
+      <action type="add" dev="sseifert">
+        Add support for downloading Windows NodeJS binaries as ZIP including NPM which is available since Node 6.3.0.
+      </action>
+      <action type="update" dev="sseifert">
+        Update to dropwizard 1.3.9.
+      </action>
+    </release>
+
     <release version="1.1.0" date="2016-03-22">
       <action type="update" dev="sseifert" issue="WDEVOP-1">
         Binary File Structre changed in NPM Versions > 0.x and support for SHA-256 checksums.

@@ -36,18 +36,20 @@ import org.junit.Test;
 
 import io.dropwizard.testing.junit.ResourceTestRule;
 
-
 public class MavenProxyResourceTest {
 
   // test with the following NodeJS and NPM versions
   private static final String[] NODEJS_VERSIONS = {
-      "0.12.0",
-      "4.4.0"
+      "6.3.0",
+      "10.15.0"
   };
   private static final String[] NODEJS_TARGETS = {
+      "-windows-x86.zip",
+      "-windows-x64.zip",
+      "-win-x86.zip",
+      "-win-x64.zip",
       "-windows-x86.exe",
       "-windows-x64.exe",
-      "-linux-x86.tar.gz",
       "-linux-x64.tar.gz",
       "-darwin-x64.tar.gz"
   };
@@ -60,8 +62,8 @@ public class MavenProxyResourceTest {
 
   @Rule
   public ResourceTestRule context = new ResourceTestRule.Builder()
-  .addResource(new MavenProxyResource(TestContext.getConfiguration(), TestContext.getHttpClient()))
-  .build();
+      .addResource(new MavenProxyResource(TestContext.getConfiguration(), TestContext.getHttpClient()))
+      .build();
 
   @Test
   public void testGetIndex() {

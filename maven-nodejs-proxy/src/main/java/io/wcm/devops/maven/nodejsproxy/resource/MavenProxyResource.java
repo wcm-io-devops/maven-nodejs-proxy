@@ -206,7 +206,7 @@ public class MavenProxyResource {
     }
 
     String url = buildBinaryUrl(artifactType, version, null, null, StringUtils.removeEnd(type, ".sha1"));
-    return getBinary(url, version, getChecksum, null);
+    return getBinary(url, getChecksum, null);
   }
 
   private Response getBinaryWithChecksumValidation(String url, String version, boolean getChecksum) throws IOException {
@@ -222,10 +222,10 @@ public class MavenProxyResource {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
 
-    return getBinary(url, version, getChecksum, checksum);
+    return getBinary(url, getChecksum, checksum);
   }
 
-  private Response getBinary(String url, String version, boolean getChecksum, String expectedChecksum) throws IOException {
+  private Response getBinary(String url, boolean getChecksum, String expectedChecksum) throws IOException {
     log.info("Proxy file: {}", url);
     HttpGet get = new HttpGet(url);
     HttpResponse response = httpClient.execute(get);
@@ -335,7 +335,7 @@ public class MavenProxyResource {
     String url;
     switch (artifactType) {
       case NODEJS:
-        if (StringUtils.equals(os, "windows")) {
+        if (StringUtils.equals(os, "windows") && StringUtils.equals(type, "exe")) {
           if (isVersion4Up(version)) {
             url = config.getNodeJsBinariesUrlWindows();
           }
@@ -358,7 +358,7 @@ public class MavenProxyResource {
     }
     url = config.getNodeJsBinariesRootUrl() + url;
     url = StringUtils.replace(url, "${version}", StringUtils.defaultString(version));
-    url = StringUtils.replace(url, "${os}", StringUtils.defaultString(os));
+    url = StringUtils.replace(url, "${os}", StringUtils.defaultString(StringUtils.replace(os, "windows", "win")));
     url = StringUtils.replace(url, "${arch}", StringUtils.defaultString(arch));
     url = StringUtils.replace(url, "${type}", StringUtils.defaultString(type));
     return url;
