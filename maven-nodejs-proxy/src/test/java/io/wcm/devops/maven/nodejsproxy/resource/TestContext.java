@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
+import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.wcm.devops.maven.nodejsproxy.MavenProxyConfiguration;
 
@@ -41,7 +42,7 @@ final class TestContext {
   }
 
   static MavenProxyConfiguration getConfiguration() {
-    ConfigurationFactory factory = new ConfigurationFactory<MavenProxyConfiguration>(
+    ConfigurationFactory factory = new YamlConfigurationFactory<MavenProxyConfiguration>(
         MavenProxyConfiguration.class, null, OBJECT_MAPPER, "override");
     try {
       File configFile = new File("config.yml");
