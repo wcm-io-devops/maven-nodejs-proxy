@@ -1,6 +1,6 @@
 <img src="https://wcm.io/images/favicon-16@2x.png"/> Maven NodeJS Proxy
 ======
-[![Build Status](https://travis-ci.org/wcm-io-devops/maven-nodejs-proxy.png?branch=develop)](https://travis-ci.org/wcm-io-devops/maven-nodejs-proxy)
+[![Build Status](https://travis-ci.com/wcm-io-devops/maven-nodejs-proxy.png?branch=develop)](https://travis-ci.com/wcm-io-devops/maven-nodejs-proxy)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.wcm.devops.maven/io.wcm.devops.maven.nodejs-proxy/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.wcm.devops.maven/io.wcm.devops.maven.nodejs-proxy)
 
 Maven proxy to download NodeJS binaries as Maven artifacts.
