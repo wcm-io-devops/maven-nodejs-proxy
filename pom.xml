@@ -25,7 +25,7 @@
   <parent>
     <groupId>io.wcm.devops</groupId>
     <artifactId>io.wcm.devops.parent_toplevel</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.5-SNAPSHOT</version>
     <relativePath />
   </parent>
 
@@ -43,6 +43,11 @@
     <url>https://github.com/wcm-io-devops/maven-nodejs-proxy</url>
     <tag>HEAD</tag>
   </scm>
+
+  <ciManagement>
+    <system>GitHub Actions</system>
+    <url>https://github.com/wcm-io-devops/maven-nodejs-proxy/actions</url>
+  </ciManagement>
 
   <modules>
     <module>maven-nodejs-proxy</module>
