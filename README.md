@@ -1,7 +1,8 @@
-<img src="http://wcm.io/images/favicon-16@2x.png"/> Maven NodeJS Proxy
+<img src="https://wcm.io/images/favicon-16@2x.png"/> Maven NodeJS Proxy
 ======
-[![Build Status](https://travis-ci.com/wcm-io-devops/maven-nodejs-proxy.png?branch=develop)](https://travis-ci.com/wcm-io-devops/maven-nodejs-proxy)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.wcm.devops.maven/io.wcm.devops.maven.nodejs-proxy/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.wcm.devops.maven/io.wcm.devops.maven.nodejs-proxy)
+[![Build](https://github.com/wcm-io-devops/maven-nodejs-proxy/workflows/Build/badge.svg?branch=develop)](https://github.com/wcm-io-devops/maven-nodejs-proxy/actions?query=workflow%3ABuild+branch%3Adevelop)
+[![Maven Central](https://img.shields.io/maven-central/v/io.wcm.devops.maven/io.wcm.devops.maven.nodejs-proxy)](https://repo1.maven.org/maven2/io/wcm/devops/maven/io.wcm.devops.maven.nodejs-proxy)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=wcm-io-devops_maven-nodejs-proxy&metric=coverage)](https://sonarcloud.io/summary/new_code?id=wcm-io-devops_maven-nodejs-proxy)
 
 Maven proxy to download NodeJS binaries as Maven artifacts.
 

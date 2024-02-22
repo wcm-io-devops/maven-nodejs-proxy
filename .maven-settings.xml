@@ -31,20 +31,7 @@
 
         <repository>
           <id>central</id>
-          <url>http://repo1.maven.org/maven2/</url>
-          <layout>default</layout>
-          <releases>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </repository>
-
-        <repository>
-          <id>wcm-io-apache-intermediate-release</id>
-          <url>http://wcm.io/maven/repositories/apache-intermediate-release</url>
+          <url>https://repo1.maven.org/maven2/</url>
           <layout>default</layout>
           <releases>
             <enabled>true</enabled>
@@ -70,7 +57,7 @@
 
         <repository>
           <id>apache-snapshots</id>
-          <url>http://repository.apache.org/snapshots</url>
+          <url>https://repository.apache.org/snapshots</url>
           <layout>default</layout>
           <releases>
             <enabled>false</enabled>
@@ -87,20 +74,7 @@
 
         <pluginRepository>
           <id>central</id>
-          <url>http://repo1.maven.org/maven2/</url>
-          <layout>default</layout>
-          <releases>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </pluginRepository>
-
-        <pluginRepository>
-          <id>wcm-io-apache-intermediate-release</id>
-          <url>http://wcm.io/maven/repositories/apache-intermediate-release</url>
+          <url>https://repo1.maven.org/maven2/</url>
           <layout>default</layout>
           <releases>
             <enabled>true</enabled>
@@ -126,7 +100,7 @@
 
         <pluginRepository>
           <id>apache-snapshots</id>
-          <url>http://repository.apache.org/snapshots</url>
+          <url>https://repository.apache.org/snapshots</url>
           <layout>default</layout>
           <releases>
             <enabled>false</enabled>
@@ -146,5 +120,13 @@
   <activeProfiles>
     <activeProfile>default</activeProfile>
   </activeProfiles>
+
+  <servers>
+    <server>
+      <id>ossrh</id>
+      <username>${env.SONATYPE_USERNAME}</username>
+      <password>${env.SONATYPE_PASSWORD}</password>
+    </server>
+  </servers>
 
 </settings>

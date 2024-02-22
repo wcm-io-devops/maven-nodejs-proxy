@@ -19,19 +19,19 @@
   #L%
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>io.wcm.devops</groupId>
     <artifactId>io.wcm.devops.parent_toplevel</artifactId>
-    <version>1.1.2</version>
+    <version>1.4.4</version>
     <relativePath />
   </parent>
 
   <groupId>io.wcm.devops.maven</groupId>
   <artifactId>io.wcm.devops.maven.nodejs-proxy.root</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.2</version>
   <packaging>pom</packaging>
 
   <name>Maven NodeJS Proxy Root</name>
@@ -43,6 +43,11 @@
     <url>https://github.com/wcm-io-devops/maven-nodejs-proxy</url>
     <tag>HEAD</tag>
   </scm>
+
+  <ciManagement>
+    <system>GitHub Actions</system>
+    <url>https://github.com/wcm-io-devops/maven-nodejs-proxy/actions</url>
+  </ciManagement>
 
   <modules>
     <module>maven-nodejs-proxy</module>
