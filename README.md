@@ -1,6 +1,6 @@
 <img src="https://wcm.io/images/favicon-16@2x.png"/> Maven NodeJS Proxy
 ======
-[![Build](https://github.com/wcm-io-devops/maven-nodejs-proxy/workflows/Build/badge.svg?branch=develop)](https://github.com/wcm-io-devops/maven-nodejs-proxy/actions?query=workflow%3ABuild+branch%3Adevelop)
+[![Build](https://github.com/wcm-io-devops/maven-nodejs-proxy/actions/workflows/maven-build.yml/badge.svg?branch=develop)](https://github.com/wcm-io-devops/maven-nodejs-proxy/actions?query=workflow%3ABuild+branch%3Adevelop)
 [![Maven Central](https://img.shields.io/maven-central/v/io.wcm.devops.maven/io.wcm.devops.maven.nodejs-proxy)](https://repo1.maven.org/maven2/io/wcm/devops/maven/io.wcm.devops.maven.nodejs-proxy)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=wcm-io-devops_maven-nodejs-proxy&metric=coverage)](https://sonarcloud.io/summary/new_code?id=wcm-io-devops_maven-nodejs-proxy)
 
