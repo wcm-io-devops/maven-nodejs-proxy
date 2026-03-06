@@ -46,8 +46,8 @@ public class MavenProxyApplication extends Application<MavenProxyConfiguration> 
   @Override
   public void run(MavenProxyConfiguration config, Environment environment) {
     final CloseableHttpClient httpClient = new HttpClientBuilder(environment)
-    .using(config.getHttpClient())
-    .build("default");
+      .using(config.getHttpClient())
+      .build("default");
 
     final MavenProxyResource resource = new MavenProxyResource(config, httpClient);
 

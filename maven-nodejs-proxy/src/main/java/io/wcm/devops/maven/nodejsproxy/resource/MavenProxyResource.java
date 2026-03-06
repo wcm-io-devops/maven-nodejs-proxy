@@ -120,13 +120,13 @@ public class MavenProxyResource {
 
     if (StringUtils.equals(fileExtension, "pom")) {
       return Response.ok(xml)
-          .type(MediaType.APPLICATION_XML)
-          .build();
+        .type(MediaType.APPLICATION_XML)
+        .build();
     }
     if (StringUtils.equals(fileExtension, "pom.sha1")) {
       return Response.ok(DigestUtils.sha1Hex(xml))
-          .type(MediaType.TEXT_PLAIN)
-          .build();
+        .type(MediaType.TEXT_PLAIN)
+        .build();
     }
     return Response.status(Response.Status.NOT_FOUND).build();
   }
@@ -243,14 +243,14 @@ public class MavenProxyResource {
 
       if (getChecksum) {
         return Response.ok(DigestUtils.sha1Hex(data))
-            .type(MediaType.TEXT_PLAIN)
-            .build();
+          .type(MediaType.TEXT_PLAIN)
+          .build();
       }
       else {
         return Response.ok(data)
-            .type(MediaType.APPLICATION_OCTET_STREAM)
-            .header(CONTENT_LENGTH, response.containsHeader(CONTENT_LENGTH) ? response.getFirstHeader(CONTENT_LENGTH).getValue() : null)
-            .build();
+          .type(MediaType.APPLICATION_OCTET_STREAM)
+          .header(CONTENT_LENGTH, response.containsHeader(CONTENT_LENGTH) ? response.getFirstHeader(CONTENT_LENGTH).getValue() : null)
+          .build();
       }
     }
     else {

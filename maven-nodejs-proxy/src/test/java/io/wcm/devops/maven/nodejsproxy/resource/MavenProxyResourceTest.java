@@ -62,8 +62,8 @@ public class MavenProxyResourceTest {
 
   @Rule
   public ResourceTestRule context = new ResourceTestRule.Builder()
-      .addResource(new MavenProxyResource(TestContext.getConfiguration(), TestContext.getHttpClient()))
-      .build();
+    .addResource(new MavenProxyResource(TestContext.getConfiguration(), TestContext.getHttpClient()))
+    .build();
 
   @Test
   public void testGetIndex() {
