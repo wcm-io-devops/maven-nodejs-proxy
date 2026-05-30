@@ -193,10 +193,6 @@ In `MavenProxyApplicationIT.java`:
 
 ## Phase 6 — Security hardening (public-facing service)
 
-- [ ] Enable **Renovate** (or Dependabot) so Dropwizard/Jetty/Jackson CVEs auto-PR —
-      this is the root-cause fix for how the stack went EOL unnoticed.
-- [ ] Add **OWASP Dependency-Check** Maven plugin to fail builds on known-vulnerable
-      transitive dependencies.
 - [ ] Keep / strengthen the existing SHA-256 checksum integrity validation
       (`Checksums` + `getBinaryWithChecksumValidation`).
 - [ ] Add rate limiting / response size caps at the reverse proxy in front of the
