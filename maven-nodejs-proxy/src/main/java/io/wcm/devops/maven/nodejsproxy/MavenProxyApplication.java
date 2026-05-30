@@ -19,14 +19,14 @@
  */
 package io.wcm.devops.maven.nodejsproxy;
 
+import org.apache.http.impl.client.CloseableHttpClient;
+
 import io.dropwizard.Application;
 import io.dropwizard.client.HttpClientBuilder;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.wcm.devops.maven.nodejsproxy.health.NodeJsDistHealthCheck;
 import io.wcm.devops.maven.nodejsproxy.resource.MavenProxyResource;
-
-import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * Dropwizard Application for Maven NodeJS Proxy.
@@ -57,10 +57,8 @@ public class MavenProxyApplication extends Application<MavenProxyConfiguration> 
     environment.jersey().register(resource);
   }
 
-  //CHECKSTYLE:OFF
-  public static void main(String[] args) throws Exception {
+  public static final void main(String[] args) throws Exception {
     new MavenProxyApplication().run(args);
   }
-  //CHECKSTYLE:ON
 
 }
