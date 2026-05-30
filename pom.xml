@@ -115,9 +115,21 @@
             <filter>
               <artifact>*:*</artifact>
               <excludes>
+                <!-- Drop signature files (invalid after shading) -->
                 <exclude>META-INF/*.SF</exclude>
                 <exclude>META-INF/*.DSA</exclude>
                 <exclude>META-INF/*.RSA</exclude>
+                <!-- Dropwizard apps run from the classpath, not the module path:
+                     module-info descriptors are meaningless in an uber jar and only
+                     trigger "Shading will break its strong encapsulation" warnings -->
+                <exclude>module-info.class</exclude>
+                <exclude>META-INF/versions/*/module-info.class</exclude>
+                <!-- Per-dependency metadata that overlaps between artifacts -->
+                <exclude>META-INF/MANIFEST.MF</exclude>
+                <exclude>META-INF/DEPENDENCIES</exclude>
+                <!-- Non-standard NOTICE variant (Jersey); the standard NOTICE is
+                     already merged by ApacheNoticeResourceTransformer -->
+                <exclude>META-INF/NOTICE.markdown</exclude>
               </excludes>
             </filter>
           </filters>
@@ -134,6 +146,9 @@
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>io.wcm.devops.maven.nodejsproxy.MavenProxyApplication</mainClass>
                 </transformer>
+                <!-- Merge overlapping Apache LICENSE/NOTICE files instead of warning -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer" />
               </transformers>
             </configuration>
           </execution>
