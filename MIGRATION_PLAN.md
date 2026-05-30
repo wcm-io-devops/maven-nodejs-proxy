@@ -29,37 +29,37 @@ Goal: lock current behavior before changing anything. These tests run against th
 unmodified Dropwizard 1.3.29 app and become the regression oracle for the migration.
 
 ### 0.1 Establish the baseline
-- [ ] Run `mvn clean install` on the current code; confirm existing unit tests pass.
-- [ ] Record current behavior of every endpoint (status codes, content types,
+- [x] Run `mvn clean install` on the current code; confirm existing unit tests pass.
+- [x] Record current behavior of every endpoint (status codes, content types,
       headers, body shape) as the source of truth.
 
 ### 0.2 Add full-application integration tests
 Add tests that boot the **whole** Dropwizard application (not just the resource) so
 we exercise the real Jersey/Jetty/HttpClient wiring that the migration will touch.
 
-- [ ] Use `DropwizardAppExtension`/`DropwizardAppRule` to start the app with
+- [x] Use `DropwizardAppExtension`/`DropwizardAppRule` to start the app with
       `config.yml` on a random port.
-- [ ] Stub the upstream `nodejs.org/dist` server (e.g. WireMock) so tests are
+- [x] Stub the upstream `nodejs.org/dist` server (e.g. WireMock) so tests are
       deterministic and offline — serve canned `SHASUMS256.txt`, binaries, and 404s.
-- [ ] Point `nodeJsBinariesRootUrl` at the WireMock base URL via a test config.
+- [x] Point `nodeJsBinariesRootUrl` at the WireMock base URL via a test config.
 
 Cover at minimum:
-- [ ] `GET /` index page → 200, `text/html`, contains expected example URLs.
-- [ ] `GET …/nodejs-binaries-<v>.pom` → 200, `application/xml`, valid POM body.
-- [ ] `GET …/nodejs-binaries-<v>.pom.sha1` → 200, `text/plain`, correct SHA1.
-- [ ] `GET …/nodejs-binaries-<v>-linux-x64.tar.gz` → 200, `application/octet-stream`,
+- [x] `GET /` index page → 200, `text/html`, contains expected example URLs.
+- [x] `GET …/nodejs-binaries-<v>.pom` → 200, `application/xml`, valid POM body.
+- [x] `GET …/nodejs-binaries-<v>.pom.sha1` → 200, `text/plain`, correct SHA1.
+- [x] `GET …/nodejs-binaries-<v>-linux-x64.tar.gz` → 200, `application/octet-stream`,
       `Content-Length` header present, body bytes match upstream.
-- [ ] `GET …-<v>-linux-x64.tar.gz.sha1` → 200, SHA1 of the binary.
-- [ ] Windows variants (`win-x64.zip`, `windows-x86.exe`, legacy `<4.0.0` paths).
-- [ ] NPM artifact (`npm-binaries-<v>.tgz`, `.pom`).
-- [ ] **Checksum mismatch** → upstream byte tampered → expect 404 (integrity reject).
-- [ ] **Unknown version / missing checksum file** → 404.
-- [ ] Invalid groupId / artifactId / version path params → 404.
-- [ ] Health check `GET /healthcheck` (admin port) → 200 healthy when upstream up,
+- [x] `GET …-<v>-linux-x64.tar.gz.sha1` → 200, SHA1 of the binary.
+- [x] Windows variants (`win-x64.zip`, `windows-x86.exe`, legacy `<4.0.0` paths).
+- [x] NPM artifact (`npm-binaries-<v>.tgz`, `.pom`).
+- [x] **Checksum mismatch** → upstream byte tampered → expect 404 (integrity reject).
+- [x] **Unknown version / missing checksum file** → 404.
+- [x] Invalid groupId / artifactId / version path params → 404.
+- [x] Health check `GET /healthcheck` (admin port) → 200 healthy when upstream up,
       unhealthy when upstream returns non-200.
 
 ### 0.3 Lock the baseline green
-- [ ] All new integration tests pass against Dropwizard 1.3.29.
+- [x] All new integration tests pass against Dropwizard 1.3.29.
 - [ ] Commit this as a standalone change **before** touching any production code.
 
 > These tests deliberately avoid Dropwizard-version-specific assertions where
