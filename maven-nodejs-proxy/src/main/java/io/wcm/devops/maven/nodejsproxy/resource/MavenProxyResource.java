@@ -33,6 +33,7 @@ import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpHead;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -115,12 +116,12 @@ public class MavenProxyResource {
 
     String xml = PomBuilder.build(groupId, artifactId, version);
 
-    if (StringUtils.equals(fileExtension, "pom")) {
+    if (Strings.CS.equals(fileExtension, "pom")) {
       return Response.ok(xml)
         .type(MediaType.APPLICATION_XML)
         .build();
     }
-    if (StringUtils.equals(fileExtension, "pom.sha1")) {
+    if (Strings.CS.equals(fileExtension, "pom.sha1")) {
       return Response.ok(DigestUtils.sha1Hex(xml))
         .type(MediaType.TEXT_PLAIN)
         .build();
@@ -161,11 +162,11 @@ public class MavenProxyResource {
     }
 
     boolean getChecksum = false;
-    if (StringUtils.endsWith(type, ".sha1")) {
+    if (Strings.CS.endsWith(type, ".sha1")) {
       getChecksum = true;
     }
 
-    String url = buildBinaryUrl(artifactType, version, os, arch, StringUtils.removeEnd(type, ".sha1"));
+    String url = buildBinaryUrl(artifactType, version, os, arch, Strings.CS.removeEnd(type, ".sha1"));
     return getBinaryWithChecksumValidation(url, version, getChecksum);
   }
 
@@ -198,11 +199,11 @@ public class MavenProxyResource {
     }
 
     boolean getChecksum = false;
-    if (StringUtils.endsWith(type, ".sha1")) {
+    if (Strings.CS.endsWith(type, ".sha1")) {
       getChecksum = true;
     }
 
-    String url = buildBinaryUrl(artifactType, version, null, null, StringUtils.removeEnd(type, ".sha1"));
+    String url = buildBinaryUrl(artifactType, version, null, null, Strings.CS.removeEnd(type, ".sha1"));
     return getBinary(url, getChecksum, null);
   }
 
@@ -242,7 +243,7 @@ public class MavenProxyResource {
     // validate checksum
     if (expectedChecksum != null) {
       String remoteChecksum = DigestUtils.sha256Hex(data);
-      if (!StringUtils.equals(expectedChecksum, remoteChecksum)) {
+      if (!Strings.CS.equals(expectedChecksum, remoteChecksum)) {
         log.warn("Reject file: {} - checksum comparison failed - expected: {}, actual: {}", url, expectedChecksum, remoteChecksum);
         return Response.status(Response.Status.NOT_FOUND).build();
       }
@@ -270,7 +271,7 @@ public class MavenProxyResource {
 
 
   private String mapGroupId(String groupIdPath) {
-    return StringUtils.replace(groupIdPath, "/", ".");
+    return Strings.CS.replace(groupIdPath, "/", ".");
   }
 
   /**
@@ -282,27 +283,27 @@ public class MavenProxyResource {
       String version,
       String artifactIdFilename,
       String versionFilename) {
-    if (!StringUtils.equals(artifactId, artifactIdFilename)) {
+    if (!Strings.CS.equals(artifactId, artifactIdFilename)) {
       return false;
     }
-    if (!StringUtils.equals(version, versionFilename)) {
+    if (!Strings.CS.equals(version, versionFilename)) {
       return false;
     }
-    if (!StringUtils.equals(groupId, config.getGroupId())) {
+    if (!Strings.CS.equals(groupId, config.getGroupId())) {
       return false;
     }
-    if (!(StringUtils.equals(artifactId, config.getNodeJsArtifactId())
-        || StringUtils.equals(artifactId, config.getNpmArtifactId()))) {
+    if (!(Strings.CS.equals(artifactId, config.getNodeJsArtifactId())
+        || Strings.CS.equals(artifactId, config.getNpmArtifactId()))) {
       return false;
     }
     return true;
   }
 
   private ArtifactType getArtifactType(String artifactId) {
-    if (StringUtils.equals(artifactId, config.getNodeJsArtifactId())) {
+    if (Strings.CS.equals(artifactId, config.getNodeJsArtifactId())) {
       return ArtifactType.NODEJS;
     }
-    if (StringUtils.equals(artifactId, config.getNpmArtifactId())) {
+    if (Strings.CS.equals(artifactId, config.getNpmArtifactId())) {
       return ArtifactType.NPM;
     }
     throw new IllegalArgumentException("Invalid artifactId: " + artifactId);
@@ -310,7 +311,7 @@ public class MavenProxyResource {
 
   private Checksums getChecksums(String version) throws IOException {
     String url = config.getNodeJsBinariesRootUrl()
-        + StringUtils.replace(config.getNodeJsChecksumUrl(), "${version}", version);
+        + Strings.CS.replace(config.getNodeJsChecksumUrl(), "${version}", version);
     log.info("Get file: {}", url);
     HttpGet get = new HttpGet(url);
     return httpClient.execute(get, response -> {
@@ -326,10 +327,10 @@ public class MavenProxyResource {
     switch (artifactType) {
       case NODEJS:
         return config.getNodeJsBinariesRootUrl()
-            + StringUtils.replace(config.getNodeJsChecksumUrl(), "${version}", version);
+            + Strings.CS.replace(config.getNodeJsChecksumUrl(), "${version}", version);
       case NPM:
         return config.getNodeJsBinariesRootUrl()
-            + StringUtils.replace(StringUtils.replace(config.getNpmBinariesUrl(), "${version}", version), "${type}", "tgz");
+            + Strings.CS.replace(Strings.CS.replace(config.getNpmBinariesUrl(), "${version}", version), "${type}", "tgz");
       default:
         throw new IllegalArgumentException("Illegal artifact type: " + artifactType);
     }
@@ -339,11 +340,11 @@ public class MavenProxyResource {
     String url;
     switch (artifactType) {
       case NODEJS:
-        if (StringUtils.equals(os, "windows") && StringUtils.equals(type, "exe")) {
+        if (Strings.CS.equals(os, "windows") && Strings.CS.equals(type, "exe")) {
           if (isVersion4Up(version)) {
             url = config.getNodeJsBinariesUrlWindows();
           }
-          else if (StringUtils.equals(arch, "x86")) {
+          else if (Strings.CS.equals(arch, "x86")) {
             url = config.getNodeJsBinariesUrlWindowsX86Legacy();
           }
           else {
@@ -361,10 +362,10 @@ public class MavenProxyResource {
         throw new IllegalArgumentException("Illegal artifact type: " + artifactType);
     }
     url = config.getNodeJsBinariesRootUrl() + url;
-    url = StringUtils.replace(url, "${version}", StringUtils.defaultString(version));
-    url = StringUtils.replace(url, "${os}", StringUtils.defaultString(StringUtils.replace(os, "windows", "win")));
-    url = StringUtils.replace(url, "${arch}", StringUtils.defaultString(arch));
-    url = StringUtils.replace(url, "${type}", StringUtils.defaultString(type));
+    url = Strings.CS.replace(url, "${version}", StringUtils.defaultString(version));
+    url = Strings.CS.replace(url, "${os}", StringUtils.defaultString(Strings.CS.replace(os, "windows", "win")));
+    url = Strings.CS.replace(url, "${arch}", StringUtils.defaultString(arch));
+    url = Strings.CS.replace(url, "${type}", StringUtils.defaultString(type));
     return url;
   }
 

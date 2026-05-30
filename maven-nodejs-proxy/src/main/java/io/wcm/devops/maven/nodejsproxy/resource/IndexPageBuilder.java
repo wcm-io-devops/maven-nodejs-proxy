@@ -19,7 +19,7 @@
  */
 package io.wcm.devops.maven.nodejsproxy.resource;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import io.wcm.devops.maven.nodejsproxy.MavenProxyConfiguration;
 
@@ -49,11 +49,11 @@ public final class IndexPageBuilder {
     StringBuilder exampleUrlsMarkup = new StringBuilder();
     for (String exampleUrl : EXAMPLE_URLS) {
       String url = exampleUrl;
-      url = StringUtils.replace(url, "${groupIdPath}", StringUtils.replace(config.getGroupId(), ".", "/"));
-      url = StringUtils.replace(url, "${nodeJsArtifactId}", config.getNodeJsArtifactId());
-      url = StringUtils.replace(url, "${npmArtifactId}", config.getNpmArtifactId());
-      url = StringUtils.replace(url, "${nodeJsSampleVersion}", config.getNodeJsSampleVersion());
-      url = StringUtils.replace(url, "${npmSampleVersion}", config.getNpmSampleVersion());
+      url = Strings.CS.replace(url, "${groupIdPath}", Strings.CS.replace(config.getGroupId(), ".", "/"));
+      url = Strings.CS.replace(url, "${nodeJsArtifactId}", config.getNodeJsArtifactId());
+      url = Strings.CS.replace(url, "${npmArtifactId}", config.getNpmArtifactId());
+      url = Strings.CS.replace(url, "${nodeJsSampleVersion}", config.getNodeJsSampleVersion());
+      url = Strings.CS.replace(url, "${npmSampleVersion}", config.getNpmSampleVersion());
       exampleUrlsMarkup.append("<li><a href=\"").append(url).append("\">").append(url).append("</a></li>");
     }
 
