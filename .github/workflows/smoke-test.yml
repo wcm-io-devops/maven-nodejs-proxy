@@ -32,7 +32,7 @@ jobs:
           cache: maven
 
       - name: Build fat jar
-        run: mvn --batch-mode --no-transfer-progress clean package -DskipTests
+        run: mvn --batch-mode --no-transfer-progress --settings .maven-settings.xml clean package -DskipTests
 
       - name: Smoke test the built jar
         run: |
