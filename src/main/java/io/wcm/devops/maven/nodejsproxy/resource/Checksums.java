@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class Checksums {
 
-  private final Map<String, String> checksums = new HashMap<>();
+  private final Map<String, String> checksumsMap = new HashMap<>();
 
   private static final Pattern LEVEL_1_RELATIVE_NAME = Pattern.compile("^.*/([^/]+)$");
   private static final Pattern LEVEL_2_RELATIVE_NAME = Pattern.compile("^.*/([^/]+/[^/]+)$");
@@ -46,7 +46,7 @@ public class Checksums {
       String checksum = StringUtils.substringBefore(line, "  ");
       String filename = StringUtils.substringAfter(line, "  ");
       if (StringUtils.isNoneBlank(checksum, filename)) {
-        checksums.put(filename, checksum);
+        checksumsMap.put(filename, checksum);
       }
     }
   }
@@ -70,7 +70,7 @@ public class Checksums {
     Matcher matcher = pattern.matcher(filename);
     if (matcher.matches()) {
       String relativeFilename = matcher.group(1);
-      return checksums.get(relativeFilename);
+      return checksumsMap.get(relativeFilename);
     }
     return null;
   }
