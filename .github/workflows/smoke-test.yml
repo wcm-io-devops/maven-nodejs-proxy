@@ -32,11 +32,9 @@ jobs:
           cache: maven
 
       - name: Build fat jar
-        working-directory: maven-nodejs-proxy
-        run: mvn --batch-mode --no-transfer-progress clean package -DskipTests
+        run: mvn --batch-mode --no-transfer-progress --settings .maven-settings.xml clean package -DskipTests
 
       - name: Smoke test the built jar
-        working-directory: maven-nodejs-proxy
         run: |
           set -euo pipefail
           JAR=$(ls target/io.wcm.devops.maven.nodejs-proxy-*.jar | grep -Ev -- '-(sources|javadoc)\.jar$' | head -n1)
