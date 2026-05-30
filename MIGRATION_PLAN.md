@@ -15,7 +15,8 @@ Apache HttpClient 4 → 5, and the test stack from JUnit 4 to JUnit 6.
 | Component | Current | Target | Notes |
 |---|---|---|---|
 | Dropwizard | `1.3.29` (EOL) | `5.0.1` | Jakarta EE 10, Jersey 3.1, Jetty 12 |
-| Java (build + runtime) | 21 / 25 (CI matrix) | **25 (LTS)** | Java 25 is the current LTS; DW5 baseline is JDK 17+ |
+| Java (bytecode/compiler) | 21 | **21** | Keep `maven.compiler.release` at 21 for broad compatibility; DW5 baseline is JDK 17+ |
+| Java (deploy/runtime) | 21 / 25 (CI matrix) | **25 (LTS)** | Run the service on the Java 25 LTS runtime; bytecode stays at 21 |
 | JAX-RS / Servlet / Validation | `javax.*` | `jakarta.*` | Namespace change across all sources |
 | Apache HttpClient | 4.x (`org.apache.http`) | 5.x (`org.apache.hc.*`) | Provided via `dropwizard-client` 5.x |
 | Test framework | JUnit 4.x | **JUnit 6.1.0** | `junit-jupiter`; Dropwizard `ResourceExtension` |
@@ -60,7 +61,7 @@ Cover at minimum:
 
 ### 0.3 Lock the baseline green
 - [x] All new integration tests pass against Dropwizard 1.3.29.
-- [ ] Commit this as a standalone change **before** touching any production code.
+- [x] Commit this as a standalone change **before** touching any production code.
 
 > These tests deliberately avoid Dropwizard-version-specific assertions where
 > possible (assert on HTTP contract, not framework internals) so they survive the
@@ -68,14 +69,17 @@ Cover at minimum:
 
 ---
 
-## Phase 1 — Build/runtime baseline to Java 25
+## Phase 1 — Runtime baseline to Java 25 (bytecode stays at Java 21)
 
-- [ ] Set Maven compiler release to `25` (via parent POM property or
-      `maven.compiler.release`).
-- [ ] Update CI matrix in `.github/workflows/maven-build.yml` to build on Java 25
+> **Decision:** keep the compiled bytecode at Java 21 for broad compatibility, but
+> build, test and deploy on the Java 25 LTS runtime. No `maven.compiler.release`
+> change is required (it stays at 21, inherited from the parent POM).
+
+- [x] Leave `maven.compiler.release` at `21` — do **not** raise the bytecode level.
+- [x] Ensure CI in `.github/workflows/maven-build.yml` builds/tests on Java 25
       (keep Sonar run on Java 25).
-- [ ] Confirm `.github/workflows/maven-deploy.yml` uses Java 25.
-- [ ] Re-run Phase 0 tests — still green on Java 25 with Dropwizard 1.3.29.
+- [x] Confirm `.github/workflows/maven-deploy.yml` deploys on Java 25.
+- [x] Re-run Phase 0 tests — still green on Java 25 with Dropwizard 1.3.29.
 
 ---
 
@@ -91,48 +95,47 @@ Cover at minimum:
 > suite against the result.
 
 ### 2a. Dependency upgrade (`maven-nodejs-proxy/pom.xml`)
-- [ ] Bump `dropwizard.version` → `5.0.1`.
-- [ ] Keep `dropwizard-core`, `dropwizard-client`, `dropwizard-testing` aligned to
+- [x] Bump `dropwizard.version` → `5.0.1`.
+- [x] Keep `dropwizard-core`, `dropwizard-client`, `dropwizard-testing` aligned to
       `${dropwizard.version}`.
-- [ ] Remove the explicit Apache HttpClient 4 expectations; rely on HttpClient 5
+- [x] Remove the explicit Apache HttpClient 4 expectations; rely on HttpClient 5
       brought transitively by `dropwizard-client` 5.x.
-- [ ] Review `commons-io`, `commons-codec`, `maven-artifact` versions — keep current,
-      bump only if needed for Jakarta/Java 25 compatibility.
-- [ ] Verify the `maven-shade-plugin` fat-jar config still produces a runnable
+- [x] Review `commons-io`, `commons-codec`, `maven-artifact` versions — keep current,
+      bump only if needed for Jakarta/Java 25 runtime compatibility.
+- [x] Verify the `maven-shade-plugin` fat-jar config still produces a runnable
       `server config.yml` jar (main class unchanged:
       `io.wcm.devops.maven.nodejsproxy.MavenProxyApplication`).
-- [ ] Regenerate `dependency-reduced-pom.xml` via the shade plugin.
+- [x] Regenerate `dependency-reduced-pom.xml` via the shade plugin.
 
 ### 2b. Namespace migration (`javax.*` → `jakarta.*`)
 Affected files: `MavenProxyResource.java`, `MavenProxyConfiguration.java`,
 `NodeJsDistHealthCheck.java` (and any other `javax.*` import).
-- [ ] `javax.ws.rs.*` → `jakarta.ws.rs.*` (`@GET`, `@Path`, `@PathParam`, `@Produces`,
+- [x] `javax.ws.rs.*` → `jakarta.ws.rs.*` (`@GET`, `@Path`, `@PathParam`, `@Produces`,
       `Response`, `MediaType`, `HttpHeaders.CONTENT_LENGTH`).
-- [ ] `javax.servlet.http.HttpServletResponse` → `jakarta.servlet.http.HttpServletResponse`.
-- [ ] `javax.validation.*` → `jakarta.validation.*`.
-- [ ] Replace `org.hibernate.validator.constraints.NotEmpty` with
+- [x] `javax.servlet.http.HttpServletResponse` → `jakarta.servlet.http.HttpServletResponse`.
+- [x] `javax.validation.*` → `jakarta.validation.*`.
+- [x] Replace `org.hibernate.validator.constraints.NotEmpty` with
       `jakarta.validation.constraints.NotEmpty` (the constraint moved to Bean
       Validation core).
-- [ ] Confirm `com.fasterxml.jackson.annotation.JsonProperty` unchanged.
+- [x] Confirm `com.fasterxml.jackson.annotation.JsonProperty` unchanged.
 
 ### 2c. Apache HttpClient 4 → 5 migration
 Affected files: `MavenProxyApplication.java`, `MavenProxyResource.java`,
 `NodeJsDistHealthCheck.java`.
-- [ ] `io.dropwizard.client.HttpClientBuilder` (DW5) now returns an HttpClient 5
+- [x] `io.dropwizard.client.HttpClientBuilder` (DW5) now returns an HttpClient 5
       `CloseableHttpClient` (`org.apache.hc.client5.http.impl.classic.CloseableHttpClient`).
-- [ ] `org.apache.http.client.methods.HttpGet/HttpHead` →
+- [x] `org.apache.http.client.methods.HttpGet/HttpHead` →
       `org.apache.hc.client5.http.classic.methods.HttpGet/HttpHead`.
-- [ ] `org.apache.http.HttpResponse` → `ClassicHttpResponse`
-      (`org.apache.hc.core5.http.ClassicHttpResponse`).
-- [ ] `response.getStatusLine().getStatusCode()` → `response.getCode()`.
-- [ ] `org.apache.http.util.EntityUtils` →
+- [x] Switched to the HttpClient 5 `execute(request, HttpClientResponseHandler)`
+      pattern (no `ClassicHttpResponse` field needed — the handler receives it).
+- [x] `response.getStatusLine().getStatusCode()` → `response.getCode()`.
+- [x] `org.apache.http.util.EntityUtils` →
       `org.apache.hc.core5.http.io.entity.EntityUtils`
-      (`toByteArray`, `toString`, `consumeQuietly` — note checked-exception changes).
-- [ ] Replace `HttpServletResponse.SC_OK` checks consistently (or switch to
-      `org.apache.hc.core5.http.HttpStatus.SC_OK`).
-- [ ] Prefer the HttpClient 5 `execute(request, HttpClientResponseHandler)` pattern
-      for safe response/entity handling where it simplifies the `try/finally`
-      `consumeQuietly` blocks.
+      (`toByteArray`, `toString`, `consume` — checked-exception changes handled).
+- [x] `HttpServletResponse.SC_OK` checks kept consistent.
+- [x] Adopted the HttpClient 5 `execute(request, HttpClientResponseHandler)` pattern
+      for safe response/entity handling, replacing the `try/finally`
+      `consumeQuietly` blocks (binary data + Content-Length wrapped in a record).
 
 > **Note on tests:** the production code will compile after 2a–2c, but the existing
 > `dropwizard-testing` / `javax.ws.rs` test code (the Phase 0 `MavenProxyApplicationIT`
@@ -145,12 +148,12 @@ Affected files: `MavenProxyApplication.java`, `MavenProxyResource.java`,
 
 ## Phase 3 — Configuration (`config.yml`) review
 
-- [ ] Verify `httpClient` block still binds to `HttpClientConfiguration` in DW5
+- [x] Verify `httpClient` block still binds to `HttpClientConfiguration` in DW5
       (connectionTimeout/timeout/timeToLive/cookiesEnabled/retries/userAgent).
-- [ ] Verify the `server.gzip.enabled: false` setting under Jetty 12 / DW5 — the
-      gzip/compression config key may have moved; keep tar.gz responses uncompressed.
-- [ ] Verify `logging` appenders config (file appender) still valid in DW5.
-- [ ] Confirm default admin/application connectors and ports behavior unchanged.
+- [x] Verify the `server.gzip.enabled: false` setting under Jetty 12 / DW5 — key
+      unchanged; app boots and tar.gz responses stay uncompressed (ITs green).
+- [x] Verify `logging` appenders config (file appender) still valid in DW5.
+- [x] Confirm default admin/application connectors and ports behavior unchanged.
 
 ---
 
@@ -170,10 +173,10 @@ In `MavenProxyApplicationIT.java`:
 
 - [x] Tests already use `org.junit.jupiter:junit-jupiter:6.1.0` (provided via the
       parent POM); JUnit 4 is no longer used.
-- [ ] `javax.ws.rs.*` in the IT → `jakarta.ws.rs.*`.
-- [ ] Re-verify the manual `DropwizardTestSupport` lifecycle against DW5 (or switch to
-      the DW5 `DropwizardAppExtension` once it is binary-compatible with JUnit
-      Platform 6).
+- [x] `javax.ws.rs.*` in the IT → `jakarta.ws.rs.*`.
+- [x] Re-verified the manual `DropwizardTestSupport` lifecycle against DW5
+      (`before()` now declares `throws Exception`; kept manual lifecycle rather than
+      the JUnit-Platform-6-incompatible DW extension).
 - [x] Integration tests (`*IT`) run via `maven-failsafe-plugin` in the
       `integration-test` / `verify` phases (kept `parallel=none` / `threadCount=0`).
 
@@ -181,7 +184,7 @@ In `MavenProxyApplicationIT.java`:
 
 ## Phase 5 — Verification
 
-- [ ] `mvn clean install` green on Java 25.
+- [ ] `mvn clean install` green on the Java 25 runtime (bytecode target Java 21).
 - [ ] **All Phase 0 integration tests pass unchanged in contract** against DW5.
 - [ ] Build the fat jar and smoke-test:
       `java -jar target/io.wcm.devops.maven.nodejs-proxy-<version>.jar server config.yml`
@@ -197,7 +200,7 @@ In `MavenProxyApplicationIT.java`:
       (`Checksums` + `getBinaryWithChecksumValidation`).
 - [ ] Add rate limiting / response size caps at the reverse proxy in front of the
       service (Ansible role) to limit upstream-fetch DoS amplification.
-- [ ] Pin Java 25 LTS as the deploy runtime.
+- [ ] Pin Java 25 LTS as the deploy runtime (bytecode remains Java 21).
 
 ---
 

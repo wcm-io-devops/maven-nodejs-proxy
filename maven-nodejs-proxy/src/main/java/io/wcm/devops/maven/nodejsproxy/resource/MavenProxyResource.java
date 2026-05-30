@@ -19,25 +19,24 @@
  */
 package io.wcm.devops.maven.nodejsproxy.resource;
 
-import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
+import static jakarta.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpHead;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,14 +105,12 @@ public class MavenProxyResource {
     String url = getPomValidateUrl(artifactType, version);
     log.info("Validate file: {}", url);
     HttpHead get = new HttpHead(url);
-    HttpResponse response = httpClient.execute(get);
-    try {
-      if (response.getStatusLine().getStatusCode() != HttpServletResponse.SC_OK) {
-        return Response.status(Response.Status.NOT_FOUND).build();
-      }
-    }
-    finally {
-      EntityUtils.consumeQuietly(response.getEntity());
+    int statusCode = httpClient.execute(get, response -> {
+      EntityUtils.consume(response.getEntity());
+      return response.getCode();
+    });
+    if (statusCode != HttpServletResponse.SC_OK) {
+      return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     String xml = PomBuilder.build(groupId, artifactId, version);
@@ -228,35 +225,47 @@ public class MavenProxyResource {
   private Response getBinary(String url, boolean getChecksum, String expectedChecksum) throws IOException {
     log.info("Proxy file: {}", url);
     HttpGet get = new HttpGet(url);
-    HttpResponse response = httpClient.execute(get);
-    if (response.getStatusLine().getStatusCode() == HttpServletResponse.SC_OK) {
+    BinaryResponse binaryResponse = httpClient.execute(get, response -> {
+      if (response.getCode() != HttpServletResponse.SC_OK) {
+        EntityUtils.consume(response.getEntity());
+        return null;
+      }
       byte[] data = EntityUtils.toByteArray(response.getEntity());
-
-      // validate checksum
-      if (expectedChecksum != null) {
-        String remoteChecksum = DigestUtils.sha256Hex(data);
-        if (!StringUtils.equals(expectedChecksum, remoteChecksum)) {
-          log.warn("Reject file: {} - checksum comparison failed - expected: {}, actual: {}", url, expectedChecksum, remoteChecksum);
-          return Response.status(Response.Status.NOT_FOUND).build();
-        }
-      }
-
-      if (getChecksum) {
-        return Response.ok(DigestUtils.sha1Hex(data))
-          .type(MediaType.TEXT_PLAIN)
-          .build();
-      }
-      else {
-        return Response.ok(data)
-          .type(MediaType.APPLICATION_OCTET_STREAM)
-          .header(CONTENT_LENGTH, response.containsHeader(CONTENT_LENGTH) ? response.getFirstHeader(CONTENT_LENGTH).getValue() : null)
-          .build();
-      }
-    }
-    else {
-      EntityUtils.consumeQuietly(response.getEntity());
+      String contentLength = response.containsHeader(CONTENT_LENGTH) ? response.getFirstHeader(CONTENT_LENGTH).getValue() : null;
+      return new BinaryResponse(data, contentLength);
+    });
+    if (binaryResponse == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
+    byte[] data = binaryResponse.data();
+
+    // validate checksum
+    if (expectedChecksum != null) {
+      String remoteChecksum = DigestUtils.sha256Hex(data);
+      if (!StringUtils.equals(expectedChecksum, remoteChecksum)) {
+        log.warn("Reject file: {} - checksum comparison failed - expected: {}, actual: {}", url, expectedChecksum, remoteChecksum);
+        return Response.status(Response.Status.NOT_FOUND).build();
+      }
+    }
+
+    if (getChecksum) {
+      return Response.ok(DigestUtils.sha1Hex(data))
+        .type(MediaType.TEXT_PLAIN)
+        .build();
+    }
+    else {
+      return Response.ok(data)
+        .type(MediaType.APPLICATION_OCTET_STREAM)
+        .header(CONTENT_LENGTH, binaryResponse.contentLength())
+        .build();
+    }
+  }
+
+  /**
+   * Holds the downloaded binary data together with the upstream Content-Length header value.
+   */
+  private record BinaryResponse(byte[] data, String contentLength) {
+    // value holder
   }
 
 
@@ -304,18 +313,13 @@ public class MavenProxyResource {
         + StringUtils.replace(config.getNodeJsChecksumUrl(), "${version}", version);
     log.info("Get file: {}", url);
     HttpGet get = new HttpGet(url);
-    HttpResponse response = httpClient.execute(get);
-    try {
-      if (response.getStatusLine().getStatusCode() == HttpServletResponse.SC_OK) {
+    return httpClient.execute(get, response -> {
+      if (response.getCode() == HttpServletResponse.SC_OK) {
         return new Checksums(EntityUtils.toString(response.getEntity()));
       }
-      else {
-        return null;
-      }
-    }
-    finally {
-      EntityUtils.consumeQuietly(response.getEntity());
-    }
+      EntityUtils.consume(response.getEntity());
+      return null;
+    });
   }
 
   private String getPomValidateUrl(ArtifactType artifactType, String version) {

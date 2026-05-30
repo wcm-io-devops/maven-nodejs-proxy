@@ -19,12 +19,12 @@
  */
 package io.wcm.devops.maven.nodejsproxy;
 
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 
-import io.dropwizard.Application;
 import io.dropwizard.client.HttpClientBuilder;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import io.wcm.devops.maven.nodejsproxy.health.NodeJsDistHealthCheck;
 import io.wcm.devops.maven.nodejsproxy.resource.MavenProxyResource;
 
