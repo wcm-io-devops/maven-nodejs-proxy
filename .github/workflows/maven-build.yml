@@ -29,3 +29,75 @@ jobs:
           sonar-run-on-java-version: 21
           sonar-token: ${{ secrets.SONAR_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  # Verify the shaded fat jar actually boots with config.yml and serves requests.
+  smoke-test:
+    name: Smoke test runnable jar (Java ${{ matrix.java }})
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        java: [21, 25]
+        os: [ubuntu-latest]
+        distribution: [temurin]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ matrix.distribution }}
+          java-version: ${{ matrix.java }}
+          cache: maven
+
+      - name: Build fat jar
+        working-directory: maven-nodejs-proxy
+        run: mvn --batch-mode --no-transfer-progress clean package -DskipTests
+
+      - name: Smoke test the built jar
+        working-directory: maven-nodejs-proxy
+        run: |
+          set -euo pipefail
+          JAR=$(ls target/io.wcm.devops.maven.nodejs-proxy-*.jar | grep -Ev -- '-(sources|javadoc)\.jar$' | head -n1)
+          echo "Starting built jar: $JAR"
+          java -jar "$JAR" server config.yml > server.log 2>&1 &
+          APP_PID=$!
+          trap 'kill "$APP_PID" 2>/dev/null || true' EXIT
+
+          # Wait for the application connector (port 8080) to accept requests.
+          up=false
+          for i in $(seq 1 30); do
+            if curl -sf -o /dev/null http://localhost:8080/; then
+              up=true
+              break
+            fi
+            if ! kill -0 "$APP_PID" 2>/dev/null; then
+              echo "::error::Application process exited before becoming ready"
+              cat server.log
+              exit 1
+            fi
+            sleep 2
+          done
+          if [ "$up" != true ]; then
+            echo "::error::Application did not become ready within timeout"
+            cat server.log
+            exit 1
+          fi
+
+          # Index page is served locally (no upstream dependency) -> hard gate.
+          echo "== GET / (index page) =="
+          status=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/)
+          echo "index status: $status"
+          if [ "$status" != "200" ]; then
+            echo "::error::Index page returned $status"
+            cat server.log
+            exit 1
+          fi
+
+          # Admin health check (hits live nodejs.org) -> reported, not gated.
+          echo "== GET /healthcheck (admin) =="
+          curl -s -w '\nhealthcheck status: %{http_code}\n' http://localhost:8081/healthcheck || true
+
+          echo "Smoke test passed: jar boots and serves the index page."

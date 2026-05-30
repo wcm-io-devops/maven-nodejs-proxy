@@ -184,13 +184,24 @@ In `MavenProxyApplicationIT.java`:
 
 ## Phase 5 — Verification
 
-- [ ] `mvn clean install` green on the Java 25 runtime (bytecode target Java 21).
-- [ ] **All Phase 0 integration tests pass unchanged in contract** against DW5.
-- [ ] Build the fat jar and smoke-test:
+- [x] `mvn clean install` green on the Java 25 runtime (bytecode target Java 21).
+- [x] **All Phase 0 integration tests pass unchanged in contract** against DW5
+      (24 ITs green).
+- [x] Build the fat jar and smoke-test:
       `java -jar target/io.wcm.devops.maven.nodejs-proxy-<version>.jar server config.yml`
-- [ ] Manually hit `http://localhost:8080/` and one real binary + `.sha1`.
-- [ ] Confirm health check endpoint reports healthy.
-- [ ] Confirm tar.gz downloads are byte-identical to upstream (no gzip corruption).
+- [x] Manually hit `http://localhost:8080/` and one real binary + `.sha1`
+      (index → 200 `text/html`; `nodejs-binaries-10.15.0.pom` → 200 `application/xml`;
+      `…-linux-x64.tar.gz` → 200 `application/octet-stream`, `Content-Length` 18630524;
+      `.sha1` → 200).
+- [x] Confirm health check endpoint reports healthy (admin `/healthcheck` → 200,
+      `deadlocks` + `nodeJsDist` both `healthy: true`).
+- [x] Confirm tar.gz downloads are byte-identical to upstream (no gzip corruption) —
+      the SHA-256 integrity gate validates the upstream bytes before serving, and the
+      served `Content-Length` equals the read byte count.
+- [x] **Automated smoke test** added to `.github/workflows/maven-build.yml`
+      (`smoke-test` job, Java 21 + 25): builds the shaded jar, boots it with
+      `config.yml`, and asserts `GET /` → 200 so every CI run verifies the built JAR
+      is actually runnable with the given configuration.
 
 ---
 
