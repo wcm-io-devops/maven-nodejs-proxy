@@ -30,13 +30,12 @@ public final class PomBuilder {
 
   /**
    * Build POM
-   * @param groupId
-   * @param artifactId
-   * @param version
-   * @param packaging
+   * @param groupId Group ID
+   * @param artifactId Artifact ID
+   * @param version Version
    * @return POM file xml
    */
-  public static String build(String groupId, String artifactId, String version, String packaging) {
+  public static String build(String groupId, String artifactId, String version) {
     return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         + "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
         + "xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n"

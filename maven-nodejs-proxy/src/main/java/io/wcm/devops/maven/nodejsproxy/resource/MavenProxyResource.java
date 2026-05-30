@@ -78,7 +78,7 @@ public class MavenProxyResource {
 
   /**
    * Maps POM requests simulating a Maven 2 directory structure.
-   * @throws IOException
+   * @throws IOException I/O exception
    */
   @GET
   @Path("{groupIdPath:[a-zA-Z0-9\\-\\_]+(/[a-zA-Z0-9\\-\\_]+)*}"
@@ -116,7 +116,7 @@ public class MavenProxyResource {
       EntityUtils.consumeQuietly(response.getEntity());
     }
 
-    String xml = PomBuilder.build(groupId, artifactId, version, "pom");
+    String xml = PomBuilder.build(groupId, artifactId, version);
 
     if (StringUtils.equals(fileExtension, "pom")) {
       return Response.ok(xml)
