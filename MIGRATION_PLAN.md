@@ -198,8 +198,8 @@ In `MavenProxyApplicationIT.java`:
 - [x] Confirm tar.gz downloads are byte-identical to upstream (no gzip corruption) —
       the SHA-256 integrity gate validates the upstream bytes before serving, and the
       served `Content-Length` equals the read byte count.
-- [x] **Automated smoke test** added to `.github/workflows/maven-build.yml`
-      (`smoke-test` job, Java 21 + 25): builds the shaded jar, boots it with
+- [x] **Automated smoke test** added as a dedicated `.github/workflows/smoke-test.yml`
+      workflow (`smoke-test` job, Java 21 + 25): builds the shaded jar, boots it with
       `config.yml`, and asserts `GET /` → 200 so every CI run verifies the built JAR
       is actually runnable with the given configuration.
 
