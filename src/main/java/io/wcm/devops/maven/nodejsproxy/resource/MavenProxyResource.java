@@ -259,6 +259,7 @@ public class MavenProxyResource {
     return getBinary(url, getChecksum, checksum);
   }
 
+  @SuppressWarnings("java:S2629") // don't complain about using Hex.encodeHexString in log warning without gating
   private Response getBinary(String url, boolean getChecksum, String expectedChecksum) throws IOException {
     log.info("Proxy file: {}", url);
     HttpGet get = new HttpGet(url);
@@ -290,10 +291,8 @@ public class MavenProxyResource {
       }
       byte[] remoteDigest = DigestUtils.sha256(data);
       if (!MessageDigest.isEqual(expectedDigest, remoteDigest)) {
-        if (log.isWarnEnabled()) {
-          log.warn("Reject file: {} - checksum comparison failed - expected: {}, actual: {}",
-              url, expectedChecksum, Hex.encodeHexString(remoteDigest));
-        }
+        log.warn("Reject file: {} - checksum comparison failed - expected: {}, actual: {}",
+            url, expectedChecksum, Hex.encodeHexString(remoteDigest));
         return Response.status(Response.Status.NOT_FOUND).build();
       }
     }
