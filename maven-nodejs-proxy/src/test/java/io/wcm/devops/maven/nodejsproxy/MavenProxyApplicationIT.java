@@ -70,7 +70,7 @@ class MavenProxyApplicationIT {
   private static Client client;
 
   @BeforeAll
-  static void startServers() throws Exception {
+  static void startServers() {
     wireMock = new WireMockServer(options().port(WIREMOCK_PORT));
     wireMock.start();
     APP.before();
