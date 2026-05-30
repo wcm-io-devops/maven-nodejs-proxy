@@ -33,10 +33,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -70,7 +70,7 @@ class MavenProxyApplicationIT {
   private static Client client;
 
   @BeforeAll
-  static void startServers() {
+  static void startServers() throws Exception {
     wireMock = new WireMockServer(options().port(WIREMOCK_PORT));
     wireMock.start();
     APP.before();

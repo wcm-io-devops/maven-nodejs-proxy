@@ -1,0 +1,7 @@
+{
+  "chat.tools.terminal.autoApprove": {
+    "mvn -q clean": true,
+    "mvn clean": true,
+    "mvn dependency:tree": true
+  }
+}

@@ -19,12 +19,12 @@
  */
 package io.wcm.devops.maven.nodejsproxy;
 
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 
-import io.dropwizard.Application;
 import io.dropwizard.client.HttpClientBuilder;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import io.wcm.devops.maven.nodejsproxy.health.NodeJsDistHealthCheck;
 import io.wcm.devops.maven.nodejsproxy.resource.MavenProxyResource;
 
@@ -57,7 +57,15 @@ public class MavenProxyApplication extends Application<MavenProxyConfiguration> 
     environment.jersey().register(resource);
   }
 
-  public static final void main(String[] args) throws Exception {
+  /**
+   * Main method.
+   * @param args Args
+   * @throws Exception Exception
+   */
+  @SuppressWarnings({
+      "CheckStyle.UncommentedMain", "PMD.SignatureDeclareThrowsException"
+  })
+  public static final void main(final String[] args) throws Exception {
     new MavenProxyApplication().run(args);
   }
 
