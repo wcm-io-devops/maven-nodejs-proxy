@@ -44,6 +44,8 @@ public final class IndexPageBuilder {
 
   /**
    * Build HTML index page
+   * @param config Configuration
+   * @return HTML markup of the index page
    */
   public static String build(MavenProxyConfiguration config) {
     StringBuilder exampleUrlsMarkup = new StringBuilder();

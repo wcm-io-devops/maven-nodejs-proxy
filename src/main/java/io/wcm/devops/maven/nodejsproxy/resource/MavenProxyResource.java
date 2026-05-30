@@ -60,7 +60,9 @@ public class MavenProxyResource {
   private static final Logger log = LoggerFactory.getLogger(MavenProxyResource.class);
 
   /**
+   * Creates a new resource instance.
    * @param config Configuration
+   * @param httpClient HTTP client
    */
   public MavenProxyResource(MavenProxyConfiguration config, CloseableHttpClient httpClient) {
     this.config = config;
@@ -69,6 +71,7 @@ public class MavenProxyResource {
 
   /**
    * Shows index page
+   * @return HTML index page
    */
   @GET
   @Path("/")
@@ -80,6 +83,13 @@ public class MavenProxyResource {
 
   /**
    * Maps POM requests simulating a Maven 2 directory structure.
+   * @param groupIdPath Group ID path
+   * @param artifactId Artifact ID
+   * @param version Version
+   * @param artifactIdFilename Artifact ID from the file name
+   * @param versionFilename Version from the file name
+   * @param fileExtension File extension
+   * @return Response
    * @throws IOException I/O exception
    */
   @GET
@@ -134,6 +144,16 @@ public class MavenProxyResource {
 
   /**
    * Maps all requests to NodeJS binaries simulating a Maven 2 directory structure.
+   * @param groupIdPath Group ID path
+   * @param artifactId Artifact ID
+   * @param version Version
+   * @param artifactIdFilename Artifact ID from the file name
+   * @param versionFilename Version from the file name
+   * @param os Operating system
+   * @param arch Architecture
+   * @param type File type
+   * @return Response
+   * @throws IOException I/O exception
    */
   @GET
   @Path("{groupIdPath:[a-zA-Z0-9\\-\\_]+(/[a-zA-Z0-9\\-\\_]+)*}"
@@ -176,6 +196,14 @@ public class MavenProxyResource {
 
   /**
    * Maps all requests to NPM binaries simulating a Maven 2 directory structure.
+   * @param groupIdPath Group ID path
+   * @param artifactId Artifact ID
+   * @param version Version
+   * @param artifactIdFilename Artifact ID from the file name
+   * @param versionFilename Version from the file name
+   * @param type File type
+   * @return Response
+   * @throws IOException I/O exception
    */
   @GET
   @Path("{groupIdPath:[a-zA-Z0-9\\-\\_]+(/[a-zA-Z0-9\\-\\_]+)*}"

@@ -37,6 +37,7 @@ public class Checksums {
   private static final Pattern LEVEL_2_RELATIVE_NAME = Pattern.compile("^.*/([^/]+/[^/]+)$");
 
   /**
+   * Parses the given checksums file content.
    * @param data Checksums file content
    */
   public Checksums(String data) {

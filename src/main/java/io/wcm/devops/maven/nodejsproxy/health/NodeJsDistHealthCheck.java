@@ -42,7 +42,9 @@ public class NodeJsDistHealthCheck extends HealthCheck {
   private static final Logger log = LoggerFactory.getLogger(NodeJsDistHealthCheck.class);
 
   /**
+   * Creates a new health check instance.
    * @param config Configuration
+   * @param httpClient HTTP client
    */
   public NodeJsDistHealthCheck(MavenProxyConfiguration config, CloseableHttpClient httpClient) {
     this.config = config;
