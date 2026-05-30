@@ -207,11 +207,12 @@ In `MavenProxyApplicationIT.java`:
 
 ## Phase 6 — Security hardening (public-facing service)
 
-- [ ] Keep / strengthen the existing SHA-256 checksum integrity validation
-      (`Checksums` + `getBinaryWithChecksumValidation`).
-- [ ] Add rate limiting / response size caps at the reverse proxy in front of the
-      service (Ansible role) to limit upstream-fetch DoS amplification.
-- [ ] Pin Java 25 LTS as the deploy runtime (bytecode remains Java 21).
+- [x] Keep / strengthen the existing SHA-256 checksum integrity validation
+      (`Checksums` + `getBinaryWithChecksumValidation`). The proxied bytes are now
+      compared against the upstream checksum with a **constant-time** comparison
+      (`MessageDigest.isEqual` on the raw SHA-256 digest bytes) instead of a `String`
+      compare. This is case-insensitive (hex is decoded), avoids timing side-channels,
+      and rejects malformed checksum entries (`DecoderException` → 404).
 
 ---
 

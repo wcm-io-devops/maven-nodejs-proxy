@@ -22,7 +22,10 @@ package io.wcm.devops.maven.nodejsproxy.resource;
 import static jakarta.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 
 import java.io.IOException;
+import java.security.MessageDigest;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
@@ -273,11 +276,22 @@ public class MavenProxyResource {
     }
     byte[] data = binaryResponse.data();
 
-    // validate checksum
+    // validate integrity: the SHA-256 of the proxied bytes must match the upstream checksum.
+    // Compare the raw digest bytes with a constant-time comparison (MessageDigest.isEqual) instead of
+    // a String comparison: this is case-insensitive (hex is decoded) and avoids leaking timing information.
     if (expectedChecksum != null) {
-      String remoteChecksum = DigestUtils.sha256Hex(data);
-      if (!Strings.CS.equals(expectedChecksum, remoteChecksum)) {
-        log.warn("Reject file: {} - checksum comparison failed - expected: {}, actual: {}", url, expectedChecksum, remoteChecksum);
+      byte[] expectedDigest;
+      try {
+        expectedDigest = Hex.decodeHex(expectedChecksum);
+      }
+      catch (DecoderException ex) {
+        log.warn("Reject file: {} - invalid checksum format: {}", url, expectedChecksum);
+        return Response.status(Response.Status.NOT_FOUND).build();
+      }
+      byte[] remoteDigest = DigestUtils.sha256(data);
+      if (!MessageDigest.isEqual(expectedDigest, remoteDigest)) {
+        log.warn("Reject file: {} - checksum comparison failed - expected: {}, actual: {}",
+            url, expectedChecksum, Hex.encodeHexString(remoteDigest));
         return Response.status(Response.Status.NOT_FOUND).build();
       }
     }
