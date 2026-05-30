@@ -57,7 +57,15 @@ public class MavenProxyApplication extends Application<MavenProxyConfiguration> 
     environment.jersey().register(resource);
   }
 
-  public static final void main(String[] args) throws Exception {
+  /**
+   * Main method.
+   * @param args Args
+   * @throws Exception Exception
+   */
+  @SuppressWarnings({
+      "CheckStyle.UncommentedMain", "PMD.SignatureDeclareThrowsException"
+  })
+  public static final void main(final String[] args) throws Exception {
     new MavenProxyApplication().run(args);
   }
 

@@ -90,6 +90,7 @@ public class MavenProxyResource {
       + "-{versionFilename:\\d+(\\.\\d+)*}"
       + ".{fileExtension:pom(\\.sha1)?}")
   @Timed
+  @SuppressWarnings("PMD.UseObjectForClearerAPI")
   public Response getPom(
       @PathParam("groupIdPath") String groupIdPath,
       @PathParam("artifactId") String artifactId,
@@ -144,6 +145,7 @@ public class MavenProxyResource {
       + "-{arch:[a-zA-Z0-9\\_]+}"
       + ".{type:[a-z]+(\\.[a-z]+)*(\\.sha1)?}")
   @Timed
+  @SuppressWarnings("PMD.UseObjectForClearerAPI")
   public Response getBinary(
       @PathParam("groupIdPath") String groupIdPath,
       @PathParam("artifactId") String artifactId,
@@ -183,6 +185,7 @@ public class MavenProxyResource {
       + "-{versionFilename:\\d+(\\.\\d+)*}"
       + ".{type:[a-z]+(\\.[a-z]+)*(\\.sha1)?}")
   @Timed
+  @SuppressWarnings("PMD.UseObjectForClearerAPI")
   public Response getBinary(
       @PathParam("groupIdPath") String groupIdPath,
       @PathParam("artifactId") String artifactId,
@@ -285,20 +288,11 @@ public class MavenProxyResource {
       String version,
       String artifactIdFilename,
       String versionFilename) {
-    if (!Strings.CS.equals(artifactId, artifactIdFilename)) {
-      return false;
-    }
-    if (!Strings.CS.equals(version, versionFilename)) {
-      return false;
-    }
-    if (!Strings.CS.equals(groupId, config.getGroupId())) {
-      return false;
-    }
-    if (!(Strings.CS.equals(artifactId, config.getNodeJsArtifactId())
-        || Strings.CS.equals(artifactId, config.getNpmArtifactId()))) {
-      return false;
-    }
-    return true;
+    return Strings.CS.equals(artifactId, artifactIdFilename)
+        && Strings.CS.equals(version, versionFilename)
+        && Strings.CS.equals(groupId, config.getGroupId())
+        && (Strings.CS.equals(artifactId, config.getNodeJsArtifactId())
+            || Strings.CS.equals(artifactId, config.getNpmArtifactId()));
   }
 
   private ArtifactType getArtifactType(String artifactId) {
