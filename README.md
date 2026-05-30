@@ -10,7 +10,6 @@ This is a Maven Artifact Proxy for NodeJS binaries located at: https://nodejs.or
 
 Steps to build and start the proxy:
 
-- Go to maven-nodejs-proxy directory
 - Build server with `mvn clean install`
 - Start server with<br/>
 `java -jar target/io.wcm.devops.maven.nodejs-proxy-<version>.jar server config.yml`

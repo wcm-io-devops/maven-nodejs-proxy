@@ -184,6 +184,25 @@ class MavenProxyApplicationIT {
   }
 
   @Test
+  void testMalformedChecksumReturns404() {
+    wireMock.resetAll();
+    stubHealthy();
+    String upstreamPath = "/v" + NODEJS_VERSION + "/node-v" + NODEJS_VERSION + "-linux-x64.tar.gz";
+    wireMock.stubFor(get(urlEqualTo(upstreamPath))
+      .willReturn(aResponse().withStatus(200).withBody(binaryContent(upstreamPath))));
+    // serve a checksum that is not valid hex so decoding fails and the download is rejected
+    String shasums = "not-a-valid-hex-checksum"
+        + "  node-v" + NODEJS_VERSION + "-linux-x64.tar.gz\n";
+    wireMock.stubFor(get(urlEqualTo("/v" + NODEJS_VERSION + "/SHASUMS256.txt"))
+      .willReturn(aResponse().withStatus(200).withBody(shasums)));
+
+    String path = "/org/nodejs/dist/nodejs-binaries/" + NODEJS_VERSION + "/nodejs-binaries-" + NODEJS_VERSION
+        + "-linux-x64.tar.gz";
+    Response response = client.target(url(path)).request().get();
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
   void testUnknownVersionMissingChecksumReturns404() {
     wireMock.resetAll();
     stubHealthy();
