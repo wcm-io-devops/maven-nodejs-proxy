@@ -23,14 +23,6 @@ import static jakarta.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 
 import java.io.IOException;
 
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
@@ -45,6 +37,13 @@ import org.slf4j.LoggerFactory;
 import com.codahale.metrics.annotation.Timed;
 
 import io.wcm.devops.maven.nodejsproxy.MavenProxyConfiguration;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 /**
  * Proxies NodeJS binaries.
@@ -54,6 +53,9 @@ public class MavenProxyResource {
 
   private final MavenProxyConfiguration config;
   private final CloseableHttpClient httpClient;
+
+  private static final String VERSION_PLACEHOLDER = "${version}";
+  private static final String SHA1_SUFFIX = ".sha1";
 
   private static final Logger log = LoggerFactory.getLogger(MavenProxyResource.class);
 
@@ -162,11 +164,11 @@ public class MavenProxyResource {
     }
 
     boolean getChecksum = false;
-    if (Strings.CS.endsWith(type, ".sha1")) {
+    if (Strings.CS.endsWith(type, SHA1_SUFFIX)) {
       getChecksum = true;
     }
 
-    String url = buildBinaryUrl(artifactType, version, os, arch, Strings.CS.removeEnd(type, ".sha1"));
+    String url = buildBinaryUrl(artifactType, version, os, arch, Strings.CS.removeEnd(type, SHA1_SUFFIX));
     return getBinaryWithChecksumValidation(url, version, getChecksum);
   }
 
@@ -199,11 +201,11 @@ public class MavenProxyResource {
     }
 
     boolean getChecksum = false;
-    if (Strings.CS.endsWith(type, ".sha1")) {
+    if (Strings.CS.endsWith(type, SHA1_SUFFIX)) {
       getChecksum = true;
     }
 
-    String url = buildBinaryUrl(artifactType, version, null, null, Strings.CS.removeEnd(type, ".sha1"));
+    String url = buildBinaryUrl(artifactType, version, null, null, Strings.CS.removeEnd(type, SHA1_SUFFIX));
     return getBinary(url, getChecksum, null);
   }
 
@@ -254,21 +256,21 @@ public class MavenProxyResource {
         .type(MediaType.TEXT_PLAIN)
         .build();
     }
-    else {
-      return Response.ok(data)
-        .type(MediaType.APPLICATION_OCTET_STREAM)
-        .header(CONTENT_LENGTH, binaryResponse.contentLength())
-        .build();
-    }
+    return Response.ok(data)
+      .type(MediaType.APPLICATION_OCTET_STREAM)
+      .header(CONTENT_LENGTH, binaryResponse.contentLength())
+      .build();
   }
 
   /**
    * Holds the downloaded binary data together with the upstream Content-Length header value.
+   * This is only used as a simple internal value holder and is never compared or used as a map key,
+   * so the default array-identity-based equals/hashCode/toString are sufficient.
    */
+  @SuppressWarnings("java:S6218") // no need for content-aware equals/hashCode/toString for this internal value holder
   private record BinaryResponse(byte[] data, String contentLength) {
     // value holder
   }
-
 
   private String mapGroupId(String groupIdPath) {
     return Strings.CS.replace(groupIdPath, "/", ".");
@@ -311,7 +313,7 @@ public class MavenProxyResource {
 
   private Checksums getChecksums(String version) throws IOException {
     String url = config.getNodeJsBinariesRootUrl()
-        + Strings.CS.replace(config.getNodeJsChecksumUrl(), "${version}", version);
+        + Strings.CS.replace(config.getNodeJsChecksumUrl(), VERSION_PLACEHOLDER, version);
     log.info("Get file: {}", url);
     HttpGet get = new HttpGet(url);
     return httpClient.execute(get, response -> {
@@ -327,10 +329,10 @@ public class MavenProxyResource {
     switch (artifactType) {
       case NODEJS:
         return config.getNodeJsBinariesRootUrl()
-            + Strings.CS.replace(config.getNodeJsChecksumUrl(), "${version}", version);
+            + Strings.CS.replace(config.getNodeJsChecksumUrl(), VERSION_PLACEHOLDER, version);
       case NPM:
         return config.getNodeJsBinariesRootUrl()
-            + Strings.CS.replace(Strings.CS.replace(config.getNpmBinariesUrl(), "${version}", version), "${type}", "tgz");
+            + Strings.CS.replace(Strings.CS.replace(config.getNpmBinariesUrl(), VERSION_PLACEHOLDER, version), "${type}", "tgz");
       default:
         throw new IllegalArgumentException("Illegal artifact type: " + artifactType);
     }
@@ -362,7 +364,7 @@ public class MavenProxyResource {
         throw new IllegalArgumentException("Illegal artifact type: " + artifactType);
     }
     url = config.getNodeJsBinariesRootUrl() + url;
-    url = Strings.CS.replace(url, "${version}", StringUtils.defaultString(version));
+    url = Strings.CS.replace(url, VERSION_PLACEHOLDER, StringUtils.defaultString(version));
     url = Strings.CS.replace(url, "${os}", StringUtils.defaultString(Strings.CS.replace(os, "windows", "win")));
     url = Strings.CS.replace(url, "${arch}", StringUtils.defaultString(arch));
     url = Strings.CS.replace(url, "${type}", StringUtils.defaultString(type));
