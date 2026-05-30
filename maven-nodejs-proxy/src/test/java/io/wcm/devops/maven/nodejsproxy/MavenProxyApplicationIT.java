@@ -216,6 +216,132 @@ class MavenProxyApplicationIT {
     assertEquals(404, response.getStatus());
   }
 
+  @Test
+  void testPomValidationUpstreamMissingReturns404() {
+    wireMock.resetAll();
+    stubHealthy();
+    // no SHASUMS256.txt stub for this version -> upstream HEAD responds 404 -> proxy returns 404
+    String path = "/org/nodejs/dist/nodejs-binaries/99.99.99/nodejs-binaries-99.99.99.pom";
+    Response response = client.target(url(path)).request().get();
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
+  void testPomValidationUpstreamErrorReturns404() {
+    wireMock.resetAll();
+    stubHealthy();
+    // upstream HEAD validation responds with a server error -> proxy returns 404
+    wireMock.stubFor(head(urlEqualTo("/v" + NODEJS_VERSION + "/SHASUMS256.txt"))
+      .willReturn(aResponse().withStatus(503)));
+    String path = "/org/nodejs/dist/nodejs-binaries/" + NODEJS_VERSION + "/nodejs-binaries-" + NODEJS_VERSION + ".pom";
+    Response response = client.target(url(path)).request().get();
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
+  void testPomInvalidGroupIdReturns404() {
+    String path = "/com/example/nodejs-binaries/" + NODEJS_VERSION + "/nodejs-binaries-" + NODEJS_VERSION + ".pom";
+    Response response = client.target(url(path)).request().get();
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
+  void testPomInconsistentVersionReturns404() {
+    String path = "/org/nodejs/dist/nodejs-binaries/" + NODEJS_VERSION + "/nodejs-binaries-9.9.9.pom";
+    Response response = client.target(url(path)).request().get();
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
+  void testBinaryDownloadUpstreamErrorReturns404() {
+    wireMock.resetAll();
+    stubHealthy();
+    // checksum file is present with a valid entry, but the binary download itself fails with a non-200 status
+    String upstreamPath = "/v" + NODEJS_VERSION + "/node-v" + NODEJS_VERSION + "-linux-x64.tar.gz";
+    String shasums = DigestUtils.sha256Hex(binaryContent(upstreamPath))
+        + "  node-v" + NODEJS_VERSION + "-linux-x64.tar.gz\n";
+    wireMock.stubFor(get(urlEqualTo("/v" + NODEJS_VERSION + "/SHASUMS256.txt"))
+      .willReturn(aResponse().withStatus(200).withBody(shasums)));
+    wireMock.stubFor(get(urlEqualTo(upstreamPath)).willReturn(aResponse().withStatus(503)));
+
+    String path = "/org/nodejs/dist/nodejs-binaries/" + NODEJS_VERSION + "/nodejs-binaries-" + NODEJS_VERSION
+        + "-linux-x64.tar.gz";
+    Response response = client.target(url(path)).request().get();
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
+  void testBinaryMissingChecksumEntryReturns404() {
+    wireMock.resetAll();
+    stubHealthy();
+    // checksum file is present but contains no entry for the requested binary -> proxy returns 404
+    String shasums = "0000000000000000000000000000000000000000000000000000000000000000"
+        + "  node-v" + NODEJS_VERSION + "-darwin-x64.tar.gz\n";
+    wireMock.stubFor(get(urlEqualTo("/v" + NODEJS_VERSION + "/SHASUMS256.txt"))
+      .willReturn(aResponse().withStatus(200).withBody(shasums)));
+
+    String path = "/org/nodejs/dist/nodejs-binaries/" + NODEJS_VERSION + "/nodejs-binaries-" + NODEJS_VERSION
+        + "-linux-x64.tar.gz";
+    Response response = client.target(url(path)).request().get();
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
+  void testNpmBinaryDownloadUpstreamErrorReturns404() {
+    wireMock.resetAll();
+    stubHealthy();
+    // npm download skips checksum validation -> a non-200 upstream status must still yield 404
+    wireMock.stubFor(get(urlEqualTo("/npm/npm-" + NPM_VERSION + ".tgz"))
+      .willReturn(aResponse().withStatus(503)));
+    String path = "/org/nodejs/dist/npm-binaries/" + NPM_VERSION + "/npm-binaries-" + NPM_VERSION + ".tgz";
+    Response response = client.target(url(path)).request().get();
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
+  void testNpmArtifactWithNodeJsBinaryPathReturns404() {
+    // npm artifact requested through the NodeJS binary path (os/arch) -> artifact type mismatch
+    String path = "/org/nodejs/dist/npm-binaries/" + NPM_VERSION + "/npm-binaries-" + NPM_VERSION + "-linux-x64.tar.gz";
+    Response response = client.target(url(path)).request().get();
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
+  void testNodeJsArtifactWithNpmBinaryPathReturns404() {
+    // NodeJS artifact requested through the NPM binary path (no os/arch) -> artifact type mismatch
+    String path = "/org/nodejs/dist/nodejs-binaries/" + NODEJS_VERSION + "/nodejs-binaries-" + NODEJS_VERSION + ".tgz";
+    Response response = client.target(url(path)).request().get();
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
+  void testArtifactIdFilenameMismatchReturns404() {
+    // directory artifactId differs from the filename artifactId -> basic parameter validation fails
+    String path = "/org/nodejs/dist/nodejs-binaries/" + NODEJS_VERSION + "/npm-binaries-" + NODEJS_VERSION + ".tgz";
+    Response response = client.target(url(path)).request().get();
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
+  void testBinaryDownloadChunkedTransfer() {
+    wireMock.resetAll();
+    stubHealthy();
+    // upstream streams the binary with chunked transfer encoding (delivered in multiple chunks)
+    String upstreamPath = "/v" + NODEJS_VERSION + "/node-v" + NODEJS_VERSION + "-linux-x64.tar.gz";
+    byte[] content = binaryContent(upstreamPath);
+    String shasums = DigestUtils.sha256Hex(content) + "  node-v" + NODEJS_VERSION + "-linux-x64.tar.gz\n";
+    wireMock.stubFor(get(urlEqualTo("/v" + NODEJS_VERSION + "/SHASUMS256.txt"))
+      .willReturn(aResponse().withStatus(200).withBody(shasums)));
+    wireMock.stubFor(get(urlEqualTo(upstreamPath))
+      .willReturn(aResponse().withStatus(200).withBody(content).withChunkedDribbleDelay(2, 20)));
+
+    String path = "/org/nodejs/dist/nodejs-binaries/" + NODEJS_VERSION + "/nodejs-binaries-" + NODEJS_VERSION
+        + "-linux-x64.tar.gz";
+    Response response = client.target(url(path)).request().get();
+    assertEquals(HTTP_OK, response.getStatus());
+    assertArrayEquals(content, response.readEntity(byte[].class));
+  }
+
   // ----- health check -----
 
   @Test
