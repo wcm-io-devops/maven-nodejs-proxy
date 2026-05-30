@@ -150,6 +150,16 @@
         </configuration>
       </plugin>
 
+      <!-- Run integration tests (*IT) in the integration-test/verify phases -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <parallel>none</parallel>
+          <threadCount>0</threadCount>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 

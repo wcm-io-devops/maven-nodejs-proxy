@@ -135,11 +135,11 @@ Affected files: `MavenProxyApplication.java`, `MavenProxyResource.java`,
       `consumeQuietly` blocks.
 
 > **Note on tests:** the production code will compile after 2a–2c, but the existing
-> `dropwizard-testing` / `javax.ws.rs` test code (Phase 0 suite +
-> `MavenProxyResourceTest`) also breaks on the DW5 bump. The test-side jakarta/JUnit
-> changes (Phase 4) must therefore land in the **same commit** as Phase 2 to get a
-> compiling, green build. Phases 2 and 4 are effectively one deliverable; Phase 3
-> (config review) sits in between as verification.
+> `dropwizard-testing` / `javax.ws.rs` test code (the Phase 0 `MavenProxyApplicationIT`
+> suite) also breaks on the DW5 bump. The test-side jakarta changes (Phase 4) must
+> therefore land in the **same commit** as Phase 2 to get a compiling, green build.
+> Phases 2 and 4 are effectively one deliverable; Phase 3 (config review) sits in
+> between as verification.
 
 ---
 
@@ -160,21 +160,22 @@ Affected files: `MavenProxyApplication.java`, `MavenProxyResource.java`,
 > `dropwizard-testing` imports in the test sources, so the test migration cannot be
 > deferred to a later compiling build).
 
-In `MavenProxyResourceTest.java` (and new Phase 0 tests):
+> **Note:** the legacy JUnit 4 `MavenProxyResourceTest` (and its `TestContext` helper)
+> was removed during Phase 0 — it no longer ran (the build already uses JUnit Jupiter 6
+> with no vintage engine) and its contract is fully covered by the offline
+> `MavenProxyApplicationIT`. The remaining test work is jakarta namespace + Dropwizard
+> testing API updates in that IT.
 
-- [ ] Bump to `org.junit.jupiter:junit-jupiter:6.1.0` (managed via Dropwizard BOM
-      where possible; otherwise pin explicitly).
-- [ ] Remove JUnit 4 (`junit:junit`, `@Rule`, `org.junit.Test`, `org.junit.Assert`).
-- [ ] `org.junit.Test` → `org.junit.jupiter.api.Test`.
-- [ ] `org.junit.Assert.assertEquals/assertTrue` →
-      `org.junit.jupiter.api.Assertions.*`.
-- [ ] `@Rule public ResourceTestRule` → `@RegisterExtension static ResourceExtension`
-      (`io.dropwizard.testing.junit5.ResourceExtension`).
-- [ ] App-level tests use `io.dropwizard.testing.junit5.DropwizardAppExtension` with
-      `@ExtendWith(DropwizardExtensionsSupport.class)`.
-- [ ] `javax.ws.rs.*` in tests → `jakarta.ws.rs.*`.
-- [ ] Ensure `maven-surefire-plugin` picks up the JUnit Platform (keep
-      `parallel=none` / `threadCount=0` for the existing non-parallel requirement).
+In `MavenProxyApplicationIT.java`:
+
+- [x] Tests already use `org.junit.jupiter:junit-jupiter:6.1.0` (provided via the
+      parent POM); JUnit 4 is no longer used.
+- [ ] `javax.ws.rs.*` in the IT → `jakarta.ws.rs.*`.
+- [ ] Re-verify the manual `DropwizardTestSupport` lifecycle against DW5 (or switch to
+      the DW5 `DropwizardAppExtension` once it is binary-compatible with JUnit
+      Platform 6).
+- [x] Integration tests (`*IT`) run via `maven-failsafe-plugin` in the
+      `integration-test` / `verify` phases (kept `parallel=none` / `threadCount=0`).
 
 ---
 
@@ -224,5 +225,5 @@ In `MavenProxyResourceTest.java` (and new Phase 0 tests):
 - `src/main/java/io/wcm/devops/maven/nodejsproxy/MavenProxyConfiguration.java`
 - `src/main/java/io/wcm/devops/maven/nodejsproxy/resource/MavenProxyResource.java`
 - `src/main/java/io/wcm/devops/maven/nodejsproxy/health/NodeJsDistHealthCheck.java`
-- `src/test/java/io/wcm/devops/maven/nodejsproxy/resource/MavenProxyResourceTest.java`
+- `src/test/java/io/wcm/devops/maven/nodejsproxy/MavenProxyApplicationIT.java`
 - `.github/workflows/maven-build.yml`, `.github/workflows/maven-deploy.yml`

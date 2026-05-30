@@ -54,7 +54,7 @@ import io.dropwizard.testing.ResourceHelpers;
  * Jersey/Jetty/HttpClient wiring against a stubbed (WireMock) upstream "nodejs.org/dist" server, so that the
  * HTTP contract is locked before the Dropwizard 5 migration.
  */
-class MavenProxyApplicationIntegrationTest {
+class MavenProxyApplicationIT {
 
   private static final int WIREMOCK_PORT = 8089;
   private static final int HTTP_OK = 200;
