@@ -290,8 +290,10 @@ public class MavenProxyResource {
       }
       byte[] remoteDigest = DigestUtils.sha256(data);
       if (!MessageDigest.isEqual(expectedDigest, remoteDigest)) {
-        log.warn("Reject file: {} - checksum comparison failed - expected: {}, actual: {}",
-            url, expectedChecksum, Hex.encodeHexString(remoteDigest));
+        if (log.isWarnEnabled()) {
+          log.warn("Reject file: {} - checksum comparison failed - expected: {}, actual: {}",
+              url, expectedChecksum, Hex.encodeHexString(remoteDigest));
+        }
         return Response.status(Response.Status.NOT_FOUND).build();
       }
     }
