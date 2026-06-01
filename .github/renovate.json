@@ -7,5 +7,10 @@
     "github>wcm-io/renovate-config:automerge-testing",
     "github>wcm-io-devops/renovate-config:automerge-parent",
     "helpers:pinGitHubActionDigests"
+  ],
+  "ignoreDeps": [
+    "wcm-io-devops/github-action-maven-build-sonar",
+    "wcm-io-devops/github-action-maven-deploy",
+    "wcm-io-devops/github-action-release-from-tag"
   ]
 }
