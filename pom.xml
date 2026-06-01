@@ -49,7 +49,7 @@
   </ciManagement>
 
   <properties>
-    <dropwizard.version>5.0.1</dropwizard.version>
+    <dropwizard.version>5.0.2</dropwizard.version>
   </properties>
 
   <dependencies>
