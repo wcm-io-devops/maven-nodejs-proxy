@@ -24,9 +24,9 @@
     xsi:schemaLocation="http://maven.apache.org/changes/2.0.0 https://maven.apache.org/xsd/changes-2.0.0.xsd">
   <body>
 
-    <release version="2.0.0" date="not released">
+    <release version="2.0.0" date="2026-06-02">
       <action type="update" dev="sseifert">
-        Switch to Dropwizard 5.
+        Switch to Dropwizard 5 and update all dependencies.
       </action>
       <action type="update" dev="sseifert">
         Switch to Java 21.
