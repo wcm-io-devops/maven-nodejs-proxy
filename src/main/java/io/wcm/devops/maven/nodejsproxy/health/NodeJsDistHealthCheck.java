@@ -21,12 +21,11 @@ package io.wcm.devops.maven.nodejsproxy.health;
 
 import io.wcm.devops.maven.nodejsproxy.MavenProxyConfiguration;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,9 @@ public class NodeJsDistHealthCheck extends HealthCheck {
   private static final Logger log = LoggerFactory.getLogger(NodeJsDistHealthCheck.class);
 
   /**
+   * Creates a new health check instance.
    * @param config Configuration
+   * @param httpClient HTTP client
    */
   public NodeJsDistHealthCheck(MavenProxyConfiguration config, CloseableHttpClient httpClient) {
     this.config = config;
@@ -56,19 +57,14 @@ public class NodeJsDistHealthCheck extends HealthCheck {
 
     log.info("Validate file: {}", url);
     HttpGet get = new HttpGet(url);
-    HttpResponse response = httpClient.execute(get);
-    try {
-      if (response.getStatusLine().getStatusCode() == HttpServletResponse.SC_OK) {
+    return httpClient.execute(get, response -> {
+      EntityUtils.consume(response.getEntity());
+      if (response.getCode() == HttpServletResponse.SC_OK) {
         return Result.healthy();
       }
-      else {
-        return Result.unhealthy("Got status code " + response.getStatusLine().getStatusCode()
-            + " when accessing URL " + url);
-      }
-    }
-    finally {
-      EntityUtils.consumeQuietly(response.getEntity());
-    }
+      return Result.unhealthy("Got status code " + response.getCode()
+          + " when accessing URL " + url);
+    });
   }
 
 }

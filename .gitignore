@@ -32,3 +32,5 @@ npm-debug.log
 .vlt
 .vlt-sync*
 .brackets.json
+
+dependency-reduced-pom.xml

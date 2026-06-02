@@ -19,14 +19,14 @@
  */
 package io.wcm.devops.maven.nodejsproxy;
 
-import io.dropwizard.Application;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+
 import io.dropwizard.client.HttpClientBuilder;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import io.wcm.devops.maven.nodejsproxy.health.NodeJsDistHealthCheck;
 import io.wcm.devops.maven.nodejsproxy.resource.MavenProxyResource;
-
-import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * Dropwizard Application for Maven NodeJS Proxy.
@@ -46,8 +46,8 @@ public class MavenProxyApplication extends Application<MavenProxyConfiguration> 
   @Override
   public void run(MavenProxyConfiguration config, Environment environment) {
     final CloseableHttpClient httpClient = new HttpClientBuilder(environment)
-    .using(config.getHttpClient())
-    .build("default");
+      .using(config.getHttpClient())
+      .build("default");
 
     final MavenProxyResource resource = new MavenProxyResource(config, httpClient);
 
@@ -57,10 +57,16 @@ public class MavenProxyApplication extends Application<MavenProxyConfiguration> 
     environment.jersey().register(resource);
   }
 
-  //CHECKSTYLE:OFF
-  public static void main(String[] args) throws Exception {
+  /**
+   * Main method.
+   * @param args Args
+   * @throws Exception Exception
+   */
+  @SuppressWarnings({
+      "CheckStyle.UncommentedMain", "PMD.SignatureDeclareThrowsException"
+  })
+  public static final void main(final String[] args) throws Exception {
     new MavenProxyApplication().run(args);
   }
-  //CHECKSTYLE:ON
 
 }
