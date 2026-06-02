@@ -15,4 +15,5 @@ jobs:
       - name: Release from Tag
         uses: wcm-io-devops/github-action-release-from-tag@v1
         with:
+          body: 'Changes: https://github.com/wcm-io-devops/maven-nodejs-proxy/blob/develop/changes.xml'
           github-token: ${{ secrets.GITHUB_TOKEN }}
